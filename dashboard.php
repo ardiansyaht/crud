@@ -1,5 +1,19 @@
 <?php 
 session_start();
+
+// Cek apakah pengguna sudah login
+if (!isset($_SESSION['session_username'])) {
+    header("location: login.php");
+    exit();
+}
+
+// Cek apakah peran pengguna adalah "admin"
+if ($_SESSION['session_role'] !== 'admin') {
+    // Redirect atau lakukan sesuatu jika peran bukan "admin"
+    // Contoh: redirect ke halaman tertentu atau tampilkan pesan error
+    header("location: unauthorized.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -11,7 +25,7 @@ session_start();
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title></title>
-        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+        <!-- <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" /> -->
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     </head>
@@ -59,9 +73,9 @@ session_start();
             <i class="fas fa-circle text-success" id="onlineIndicator"></i>
         </a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#!">Kategori</a></li>
+            <!-- <li><a class="dropdown-item" href="#!">Kategori</a></li>
            
-            <li><hr class="dropdown-divider" /></li>
+            <li><hr class="dropdown-divider" /></li> -->
             <li><a class="dropdown-item" href="#" onclick="logout()">Logout</a></li>
         </ul>
     </li>
@@ -81,14 +95,14 @@ session_start();
                             
 
                             <div class="sb-sidenav-menu-heading">Addons</div>
-                            <a class="nav-link" href="">
+                            <a class="nav-link" href="infinite_loop/index.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                                 Halaman Utama
                             </a>
-                            <a class="nav-link" href="tables.html">
+                            <!-- <a class="nav-link" href="tables.html">
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                                 Tables
-                            </a>
+                            </a> -->
                         </div>
                     </div>
                     
@@ -111,7 +125,7 @@ session_start();
                     </ol>
 
                     <!-- Bagian Daftar Peserta Pelatihan -->
-                    <?php include "index.php"; ?>
+                    <?php include "tabel.php"; ?>
 
                 </div>
             </main>
@@ -139,5 +153,31 @@ session_start();
         <script src="assets/demo/chart-bar-demo.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
         <script src="js/datatables-simple-demo.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
     </body>
+
+
+    <script>
+    function logout() {
+        // Lakukan logout melalui AJAX atau langsung mengarahkan ke halaman logout PHP
+        // Saya akan menunjukkan contoh menggunakan AJAX
+        // Pastikan untuk memasukkan library jQuery jika belum ada
+
+        $.ajax({
+            type: "POST",
+            url: "logout.php", // Gantilah dengan URL yang sesuai
+            success: function(response) {
+                // Redirect ke halaman login setelah logout
+                window.location.href = "login.php";
+            },
+            error: function(error) {
+                console.error("Error during logout:", error);
+                // Handle error jika diperlukan
+            }
+        });
+    }
+</script>
+
+
 </html>

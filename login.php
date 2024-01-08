@@ -34,8 +34,9 @@ if (isset($_POST['login'])) {
         if (empty($err)) {
             $_SESSION['session_username'] = $username;
             $_SESSION['session_password'] = md5($password);
+            $_SESSION['session_role'] = $r1['role'];
 
-            header("location:dashboard.php");
+            header("location:infinite_loop/index.php");
             exit();
         }
     }

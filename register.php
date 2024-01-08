@@ -32,14 +32,18 @@ if (isset($_POST['register'])) {
         if (mysqli_num_rows($resultCheckUser) > 0) {
             $err .= "<li>Username <b>$newUsername</b> sudah digunakan.</li>";
         } else {
-            // Simpan data pengguna baru ke database
+            // Set peran pengguna (role) secara otomatis
+            $role = "users";
+
+            // Simpan data pengguna baru ke database dengan peran
             $hashedPassword = md5($newPassword);
-            $sqlInsertUser = "INSERT INTO tb_login (username, password) VALUES ('$newUsername', '$hashedPassword')";
+            $sqlInsertUser = "INSERT INTO tb_login (username, password, role) VALUES ('$newUsername', '$hashedPassword', '$role')";
             $resultInsertUser = mysqli_query($koneksi, $sqlInsertUser);
 
             if ($resultInsertUser) {
                 $_SESSION['session_username'] = $newUsername;
                 $_SESSION['session_password'] = $hashedPassword;
+                $_SESSION['session_role'] = $role;
 
                 header("location:login.php");
                 exit();

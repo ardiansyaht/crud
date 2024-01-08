@@ -1,7 +1,13 @@
 <?php 
 session_start();
-?>
 
+// Cek apakah pengguna sudah login
+if (!isset($_SESSION['session_username'])) {
+    header("location: ../login.php");
+    exit();
+}
+$userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -45,16 +51,19 @@ session_start();
               <li class="nav-item">
                 <a class="nav-link tm-nav-link" href="#contact">Kontak Kami</a>
               </li>
-              <li class="nav-item">
+              <!-- ... Bagian lain dari navigasi ... -->
+              <?php if($userRole == 'admin') { ?>
+            <!-- Tampilkan navlink Dashboard hanya untuk peran admin -->
+            <li class="nav-item">
                 <a class="nav-link tm-nav-link" href="../dashboard.php">Dashboard</a>
             </li>
-            
-            
-            
+        <?php } ?>
+            </li> 
               </li>
               <li class="nav-item">
-                  <a class="nav-link tm-nav-link" href="#logout">Logout</a>
-              </li>                    
+    <a class="nav-link tm-nav-link" href="#logout" id="logoutLink">Logout</a>
+</li>
+                    
             </ul>
           </div>        
         </div>
@@ -293,12 +302,13 @@ session_start();
 
     </section>
     
-    <script src="js/jquery-1.9.1.min.js"></script>     
+    <!-- <script src="js/jquery-1.9.1.min.js"></script>      -->
     <script src="slick/slick.min.js"></script>
     <script src="magnific-popup/jquery.magnific-popup.min.js"></script>
     <script src="js/easing.min.js"></script>
     <script src="js/jquery.singlePageNav.min.js"></script>     
     <script src="js/bootstrap.min.js"></script> 
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
 
       function getOffSet(){
@@ -484,5 +494,32 @@ session_start();
         });
       });
     </script>
+    <script>
+    // Tambahkan script JavaScript untuk menangani logout saat tombol Logout diklik
+    document.getElementById('logoutLink').addEventListener('click', function(event) {
+        event.preventDefault(); // Menghentikan aksi default dari link
+        logout(); // Panggil fungsi logout
+    });
+
+    function logout() {
+        // Lakukan logout melalui AJAX atau langsung mengarahkan ke halaman logout PHP
+        // Saya akan menunjukkan contoh menggunakan AJAX
+        // Pastikan untuk memasukkan library jQuery jika belum ada
+
+        $.ajax({
+            type: "POST",
+            url: "../logout.php", // Gantilah dengan URL yang sesuai
+            success: function(response) {
+                // Redirect ke halaman login setelah logout
+                window.location.href = "../login.php";
+            },
+            error: function(error) {
+                console.error("Error during logout:", error);
+                // Handle error jika diperlukan
+            }
+        });
+    }
+</script>
+
   </body>
 </html>
