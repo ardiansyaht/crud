@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 01 Jan 2024 pada 19.06
+-- Waktu pembuatan: 08 Jan 2024 pada 17.43
 -- Versi server: 10.4.22-MariaDB-log
 -- Versi PHP: 8.1.2
 
@@ -51,17 +51,17 @@ INSERT INTO `peserta` (`id_peserta`, `nama`, `sekolah`, `jurusan`, `no_hp`, `ala
 
 CREATE TABLE `tb_login` (
   `username` varchar(255) NOT NULL,
-  `password` varchar(225) NOT NULL
+  `password` varchar(225) NOT NULL,
+  `role` enum('users','admin','operator') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data untuk tabel `tb_login`
 --
 
-INSERT INTO `tb_login` (`username`, `password`) VALUES
-('admin', '21232f297a57a5a743894a0e4a801fc3'),
-('operator', '21232f297a57a5a743894a0e4a801fc3'),
-('siswa', '013f0f67779f3b1686c604db150d12ea');
+INSERT INTO `tb_login` (`username`, `password`, `role`) VALUES
+('admin', '21232f297a57a5a743894a0e4a801fc3', 'admin'),
+('user', '24c9e15e52afc47c225b757e7bee1f9d', 'users');
 
 --
 -- Indexes for dumped tables
