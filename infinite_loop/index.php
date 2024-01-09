@@ -15,7 +15,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Infinite Loop - Bootstrap 4.0 HTML Template</title>
+    <title>Bootcamp</title>
     <link rel="stylesheet" href="fontawesome-5.5/css/all.min.css" />
     <link rel="stylesheet" href="slick/slick.css">
     <link rel="stylesheet" href="slick/slick-theme.css">
@@ -50,6 +50,9 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                 <a class="nav-link tm-nav-link" href="#gallery">Gallery</a>
               <li class="nav-item">
                 <a class="nav-link tm-nav-link" href="#contact">Kontak Kami</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link tm-nav-link" href="login_bc.php">Login</a>
               </li>
               <!-- ... Bagian lain dari navigasi ... -->
               <?php if($userRole == 'admin') { ?>
