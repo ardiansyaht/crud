@@ -32,7 +32,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
       <nav class="navbar navbar-expand-md tm-navbar" id="tmNav">              
         <div class="container">   
           <div class="tm-next">
-              <a href="#infinite" class="navbar-brand">Sekolah Dasar</a>
+              <a href="#infinite" class="navbar-brand">TechForge Academy</a>
           </div>             
             
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,9 +74,9 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
       
       <div class="text-center tm-hero-text-container">
         <div class="tm-hero-text-container-inner">
-            <h2 class="tm-hero-title">Sekolah Dasar Negri Bala-bala</h2>
+            <h2 class="tm-hero-title">TechForge Academy</h2>
             <p class="tm-hero-subtitle">
-              Inovatif
+            Sulap ide menjadi kode, inspirasi menjadi inovasi, dan tantangan menjadi kesempatan.
               <br>Mencerdaskan Anak Bangsa
             </p>
         </div>        
@@ -98,8 +98,8 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                     <div class="tm-intro-text-container">
                         <h2 class="tm-text-primary mb-4 tm-section-title">Tentang Kami</h2>
                         <p class="mb-4 tm-intro-text">
-                          Selamat datang di Sekolah Dasar, tempat di mana setiap anak diberdayakan untuk tumbuh dan berkembang
-                           secara holistik. Kami memiliki komitmen yang kuat untuk menyemai ilmu dan karakter dalam setiap langkah mereka.</a>.</p>
+                        TechForge Academy adalah pusat pengembangan keterampilan teknologi yang didedikasikan untuk memajukan bakat-bakat di dunia pemrograman dan teknologi informasi. 
+                        Kami berkomitmen untuk memberikan lingkungan belajar yang dinamis, menantang, dan mendukung, membantu peserta didik kami mencapai puncak potensi mereka di ranah teknologi.</a>.</p>
                     </div>
                 </div>
 
@@ -113,7 +113,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                     <div class="tm-intro-text-container">
                         <h2 class="tm-text-primary mb-4">Visi</h2>
                         <p class="mb-4 tm-intro-text">
-                          Menjadi sekolah yang unggul dalam pendidikan dasar, menciptakan generasi yang berkarakter, kreatif, dan berwawasan global.</p>
+                         Menjadi pusat unggulan dalam menghasilkan talenta-talenta terbaik di bidang pemrograman, dengan fokus pada inovasi, kolaborasi, dan pemberdayaan masyarakat.</p>
                     </div>
                 </div>
                 
@@ -124,10 +124,11 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                     <div class="tm-intro-text-container">
                         <h2 class="tm-text-primary mb-4">Misi</h2>
                         <p class="mb-4 tm-intro-text">
-                          Memberikan pendidikan berkualitas yang merangsang minat dan potensi setiap siswa.
-                          Mengembangkan karakter positif melalui pembelajaran berbasis nilai.
-                          Menyediakan lingkungan yang aman, inklusif, dan mendukung perkembangan pribadi.
-                          Mengintegrasikan teknologi sebagai alat pembelajaran yang efektif.</p>
+                        Memberikan pendidikan berkualitas tinggi dalam bidang pemrograman untuk mempersiapkan peserta didik menjadi profesional yang kompeten
+                        ,Mengembangkan ekosistem belajar yang inovatif dan berorientasi pada industri guna mendukung pertumbuhan karier peserta didik
+                        ,Mendorong kolaborasi antara peserta didik, instruktur, dan industri untuk menciptakan solusi teknologi yang relevan
+                        ,Menanamkan nilai-nilai kepemimpinan, etika, dan tanggung jawab sosial dalam setiap peserta didik
+                        ,Menyediakan akses pendidikan pemrograman yang inklusif dan berkelanjutan bagi semua lapisan masyarakat.</p>
                     </div>
                 </div>
 
@@ -141,8 +142,10 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                     <div class="tm-intro-text-container">
                         <h2 class="tm-text-primary mb-4">Sejarah Singkat</h2>
                         <p class="mb-4 tm-intro-text">
-                          Sekolah Dasar XYZ didirikan pada tahun [tahun berdiri] sebagai wujud komitmen untuk memberikan pendidikan terbaik untuk anak-anak di [lokasi]. 
-                          Dengan fasilitas modern, kurikulum yang terkini, dan tenaga pengajar yang berdedikasi, sekolah ini telah menjadi tempat belajar yang inspiratif.</p>
+                        TechForge Academy didirikan pada tahun 2016 dengan tujuan utama membuka peluang bagi individu 
+                        yang berminat mengembangkan keterampilan pemrograman dan meniti karier di dunia teknologi. Sejak itu, kami telah berhasil membimbing 
+                        dan menciptakan berbagai generasi pemrogram yang sukses dan inovatif. Dengan dukungan instruktur berpengalaman dan kurikulum yang terus dikembangkan, 
+                        TechForge Academy terus berkomitmen untuk menjadi wadah pembelajaran yang inspiratif dan berkualitas.</p>
                         </div>
                     </div>
                 </div>

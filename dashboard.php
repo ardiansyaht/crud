@@ -51,7 +51,7 @@ if ($_SESSION['session_role'] !== 'admin') {
         <input class="form-control" type="text" name="search" placeholder="Cari berdasarkan nama" />
         <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="submit">
-                <i class="fas fa-search"></i> <!-- Ganti ini dengan kode ikon search yang sesuai -->
+                <i class="fas fa-search"></i>
             </button>
         </div>
     </div>

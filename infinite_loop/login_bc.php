@@ -29,14 +29,14 @@ if (isset($_POST['login'])) {
 }
 
 
-// Cek apakah pengguna sudah login
+
 if (!isset($_SESSION['session_username'])) {
     header("location: ../login.php");
     exit();
 }
 $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
 ?>
-?>
+
 
 <!DOCTYPE html>
 <html>
@@ -46,13 +46,18 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="login-register/fonts/linearicons/style.css">
     <link rel="stylesheet" href="login-register/css/style.css">
+    <style>
+        
+    </style>
 </head>
 
 <body>
 
 <div class="wrapper">
     <div class="inner">
+    
         <img src="login-register/images/image-1.png" alt="" class="image-1">
+        <a href="index.php" class="back-link" style="color: #808080;"><span class="lnr lnr-arrow-left"></span> Back to Home</a>
         <form action="" method="post">
             <h3>LOGIN</h3>
 
@@ -61,7 +66,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                     <?php echo $error_message; ?>
                 </div>
             <?php } ?>
-
+             
             <div class="form-holder">
                 <span class="lnr lnr-envelope"></span>
                 <input type="text" class="form-control" name="email" placeholder="Mail">
@@ -74,19 +79,22 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                 <span>Login</span>
             </button>
 
-            <!-- Footer Section -->
-            <div class="footer">
-                <div class="left-footer">
-                    <p>
-                        Don't have an account? <a href="register_bc.php" class="sign-up-link">Sign Up</a>
-                    </p>
-                </div>
-                <div class="right-footer">
-                    <p>
-                        Forgot your password? <a href="#" class="forgot-password-link">Forgot Password</a>
-                    </p>
-                </div>
-            </div>
+           <!-- Footer Section -->
+<div class="footer">
+    <div class="left-footer">
+        <p style="color: #808080;">
+            Don't have an account? <a href="register_bc.php" class="sign-up-link" style="color: #808080;">Sign Up</a>
+        </p>
+    </div>
+    <div class="right-footer">
+        <p style="color: #808080;">
+             <a href="#" class="forgot-password-link" style="color: #808080;">Forgot password?</a>
+        </p>
+    </div>
+</div>
+
+
+
             <!-- End Footer Section -->
         </form>
         <img src="login-register/images/image-2.png" alt="" class="image-2">

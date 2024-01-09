@@ -12,7 +12,6 @@ $koneksi    = mysqli_connect($host_db, $user_db, $pass_db, $nama_db);
 $err        = "";
 $username   = "";
 
-
 if (isset($_POST['login'])) {
     $username   = $_POST['username'];
     $password   = $_POST['password'];
@@ -41,76 +40,91 @@ if (isset($_POST['login'])) {
         }
     }
 }
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <style>
-        /* Tambahkan CSS sesuai kebutuhan */
-        .show-password-btn {
-            cursor: pointer;
-        }
-    </style>
+	<title>Login</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="login/images/icons/favicon.ico"/>
+	<link rel="stylesheet" type="text/css" href="login/vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="login/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="login/fonts/iconic/css/material-design-iconic-font.min.css">
+	<link rel="stylesheet" type="text/css" href="login/vendor/animate/animate.css">
+	<link rel="stylesheet" type="text/css" href="login/vendor/css-hamburgers/hamburgers.min.css">
+	<link rel="stylesheet" type="text/css" href="login/vendor/animsition/css/animsition.min.css">
+	<link rel="stylesheet" type="text/css" href="login/vendor/select2/select2.min.css">
+	<link rel="stylesheet" type="text/css" href="login/vendor/daterangepicker/daterangepicker.css">
+	<link rel="stylesheet" type="text/css" href="login/css/util.css">
+	<link rel="stylesheet" type="text/css" href="login/css/main.css">
+
 </head>
 <body>
-<div class="container my-4">    
-    <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">                    
-        <div class="panel panel-info" >
-            <div class="panel-heading">
-                <div class="panel-title">Login dan Masuk Ke Sistem</div>
-            </div>      
-            <div style="padding-top:30px" class="panel-body" >
-                <?php if($err){ ?>
-                    <div id="login-alert" class="alert alert-danger col-sm-12">
-                        <ul><?php echo $err ?></ul>
+<div class="limiter">
+    <div class="container-login100" style="background-image: url('login/images/bg-01.jpg');">
+        <div class="wrap-login100">
+            <form class="login100-form validate-form" method="post" action="">
+                <span class="login100-form-logo">
+                    <i class="zmdi zmdi-landscape"></i>
+                </span>
+
+                <span class="login100-form-title p-b-34 p-t-27">
+                    Log in
+                </span>
+
+                <div class="wrap-input100 validate-input" data-validate="Enter username">
+                    <input class="input100" type="text" name="username" placeholder="Username" value="<?php echo $username; ?>">
+                    <span class="focus-input100" data-placeholder="&#xf207;"></span>
+                </div>
+
+                <div class="wrap-input100 validate-input" data-validate="Enter password">
+                    <input class="input100" type="password" name="password" placeholder="Password">
+                    <span class="focus-input100" data-placeholder="&#xf191;"></span>
+                </div>
+
+                <!-- <div class="contact100-form-checkbox">
+                    <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
+                    <label class="label-checkbox100" for="ckb1">
+                        Remember me
+                    </label>
+                </div> -->
+
+                    <div class="container-login100-form-btn">
+                        <button class="login100-form-btn" type="submit" name="login">
+                            Login
+                        </button>
                     </div>
-                <?php } ?>                
-                <form id="loginform" class="form-horizontal" action="" method="post" role="form">       
-                    <div style="margin-bottom: 25px" class="input-group">
-                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                        <input id="login-username" type="text" class="form-control" name="username" value="<?php echo $username ?>" placeholder="Username">                                        
-                    </div>
-                    <div style="margin-bottom: 25px" class="input-group">
-                        <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                        <input id="login-password" type="password" class="form-control" name="password" placeholder="Password">
-                        <!-- Menambahkan tombol "Show Password" -->
-                        <span class="input-group-addon show-password-btn" onclick="togglePassword()">
-                            <i class="glyphicon glyphicon-eye-open"></i>
-                        </span>
-                    </div>
-                    <div style="margin-top:10px" class="form-group">
-                        <div class="col-sm-12 controls">
-                            <input type="submit" name="login" class="btn btn-success" value="Login"/> 
-                            <!-- Add the registration button -->
-        <a href="register.php" class="btn btn-primary">Register</a>
-                      </div>
-                       </div>
-                        </div>
-                    </div>
-                </form>    
-            </div>                     
-        </div>  
+
+                <div class="text-center p-t-30">
+                    <a class="txt1" href="register.php">
+                        Sign Up?
+
+                <div class="text-center p-t-5">
+                    <a class="txt1" href="#">
+                        Forgot Password?
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+	
 
-<script>
-    function togglePassword() {
-        var passwordInput = document.getElementById("login-password");
+	<div id="dropDownSelect1"></div>
+	
 
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-        } else {
-            passwordInput.type = "password";
-        }
-    }
-</script>
+	<script src="login/vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script src="login/vendor/animsition/js/animsition.min.js"></script>
+	<script src="login/vendor/bootstrap/js/popper.js"></script>
+	<script src="login/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="login/vendor/select2/select2.min.js"></script>
+	<script src="login/vendor/daterangepicker/moment.min.js"></script>
+	<script src="login/vendor/daterangepicker/daterangepicker.js"></script>
+	<script src="login/vendor/countdowntime/countdowntime.js"></script>
+	<script src="login/js/main.js"></script>
 
 </body>
 </html>

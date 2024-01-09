@@ -60,13 +60,21 @@ if (isset($_POST['register'])) {
 <head>
     <!-- Tambahan CSS atau link ke file eksternal jika diperlukan -->
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="icon" type="image/png" href="login/images/icons/favicon.ico"/>
+	<link rel="stylesheet" type="text/css" href="login/vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="login/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="login/fonts/iconic/css/material-design-iconic-font.min.css">
+	<link rel="stylesheet" type="text/css" href="login/vendor/animate/animate.css">
+	<link rel="stylesheet" type="text/css" href="login/vendor/css-hamburgers/hamburgers.min.css">
+	<link rel="stylesheet" type="text/css" href="login/vendor/animsition/css/animsition.min.css">
+	<link rel="stylesheet" type="text/css" href="login/vendor/select2/select2.min.css">
+	<link rel="stylesheet" type="text/css" href="login/vendor/daterangepicker/daterangepicker.css">
+	<link rel="stylesheet" type="text/css" href="login/css/util.css">
+	<link rel="stylesheet" type="text/css" href="login/css/main.css">
     <style>
-        /* Tambahkan CSS sesuai kebutuhan */
-        .show-password-btn {
-            cursor: pointer;
-        }
+     
+        
     </style>
-    <!-- Tambahkan script validasi di sisi klien -->
     <script>
         function validateForm() {
             var newPassword = document.getElementById("new-password").value;
@@ -87,62 +95,72 @@ if (isset($_POST['register'])) {
     </script>
 </head>
 <body>
-    <!-- Bagian Register -->
-    <div class="container my-4">    
-        <div id="registerbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">                    
-            <div class="panel panel-info" >
-                <div class="panel-heading">
-                    <div class="panel-title">Registrasi Akun</div>
-                </div>      
-                <div style="padding-top:30px" class="panel-body">
-                    <?php if($err){ ?>
-                        <div id="register-alert" class="alert alert-danger col-sm-12">
-                            <ul><?php echo $err ?></ul>
-                        </div>
-                    <?php } ?>                
-                    <form id="registerform" class="form-horizontal" action="" method="post" role="form" onsubmit="return validateForm()">       
-                        <div style="margin-bottom: 25px" class="input-group">
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                            <input id="new-username" type="text" class="form-control" name="new_username" value="<?php echo $newUsername ?>" placeholder="Username">                                        
-                        </div>
-                        <div style="margin-bottom: 25px" class="input-group">
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                            <input id="new-password" type="password" class="form-control" name="new_password" placeholder="Password">
-                            <!-- Menambahkan tombol "Show Password" -->
-                            <span class="input-group-addon show-password-btn" onclick="togglePassword('new-password')">
-                                <i class="glyphicon glyphicon-eye-open"></i>
-                            </span>
-                        </div>
-                        <div style="margin-bottom: 25px" class="input-group">
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                            <input id="confirm-password" type="password" class="form-control" name="confirm_password" placeholder="Confirm Password">
-                            <!-- Menambahkan tombol "Show Password" -->
-                            <span class="input-group-addon show-password-btn" onclick="togglePassword('confirm-password')">
-                                <i class="glyphicon glyphicon-eye-open"></i>
-                            </span>
-                        </div>
-                        <div style="margin-top:10px" class="form-group">
-                            <div class="col-sm-12 controls">
-                                <input type="submit" name="register" class="btn btn-success" value="Register"/>
-                                <a href="login.php" class="btn btn-primary">Login</a>
-                            </div>
-                        </div>
-                    </form>    
-                </div>                     
-            </div>  
+    <!-- Formulir Register -->
+    <div class="limiter">
+        <div class="container-login100" style="background-image: url('login/images/bg-01.jpg');">
+            <div class="wrap-login100">
+                <form id="registerform" class="login100-form validate-form" action="" method="post" onsubmit="return validateRegisterForm()">
+                    <span class="login100-form-logo">
+                        <i class="zmdi zmdi-landscape"></i>
+                    </span>
+
+                    <span class="login100-form-title p-b-34 p-t-27">
+                        Register
+                    </span>
+
+                    <div class="wrap-input100 validate-input" data-validate="Enter username">
+                        <input class="input100" type="text" name="new_username" placeholder="Username">
+                        <span class="focus-input100" data-placeholder="&#xf207;"></span>
+                    </div>
+
+                    <div class="wrap-input100 validate-input" data-validate="Enter password">
+                        <input class="input100" type="password" id="new-password" name="new_password" placeholder="Password">
+                        <span class="focus-input100" data-placeholder="&#xf191;"></span>
+                        
+                        </span>
+                    </div>
+
+                    <div class="wrap-input100 validate-input" data-validate="Confirm password">
+                        <input class="input100" type="password" id="confirm-password" name="confirm_password" placeholder="Confirm Password">
+                        <span class="focus-input100" data-placeholder="&#xf191;"></span>
+                        
+                        </span>
+                    </div>
+
+                    <div class="container-login100-form-btn">
+                    <button class="login100-form-btn" type="submit" name="register">
+                        Register
+                    </button>
+                </div>
+                <div class="text-center p-t-10">
+    <?php
+    if (!empty($err)) {
+        echo '<div class="alert alert-danger">' . $err . '</div>';
+    }
+    ?>
+    <?php
+    if (!empty($confirmPasswordError)) {
+        echo '<div class="alert alert-danger">' . $confirmPasswordError . '</div>';
+    }
+    ?>
+</div>
+                <div class="text-center p-t-30">
+                    <a class="txt1" href="login.php">
+                    Already have an account?
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-    <!-- Script untuk toggle password (sama seperti yang ada di form login) -->
-    <script>
-        function togglePassword(inputId) {
-            var passwordInput = document.getElementById(inputId);
+    <!-- <script src="login/vendor/jquery/jquery-3.2.1.min.js"></script> -->
+	<script src="login/vendor/animsition/js/animsition.min.js"></script>
+	<script src="login/vendor/bootstrap/js/popper.js"></script>
+	<script src="login/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="login/vendor/select2/select2.min.js"></script>
+	<script src="login/vendor/daterangepicker/moment.min.js"></script>
+	<script src="login/vendor/daterangepicker/daterangepicker.js"></script>
+	<script src="login/vendor/countdowntime/countdowntime.js"></script>
+	<script src="login/js/main.js"></script>
 
-            if (passwordInput.type === "password") {
-                passwordInput.type = "text";
-            } else {
-                passwordInput.type = "password";
-            }
-        }
-    </script>
 </body>
 </html>

@@ -196,11 +196,13 @@ button {
     -o-box-shadow: none; }
 
   .wrapper {
-    background: none; } }
+    position: relative; }
+  }
+    
 
 
 
-/* Add this to your existing CSS file or create a new one */
+/* Tambahkan ini ke dalam file CSS yang sudah ada atau buat file baru */
 
 .footer {
   margin-top: 20px;
@@ -208,6 +210,8 @@ button {
   justify-content: space-between;
   text-align: center;
   color: #fff;
+  position: relative;
+  z-index: 1; /* Tambahkan properti z-index di sini */
 }
 
 .footer a {
@@ -215,10 +219,36 @@ button {
   text-decoration: none;
 }
 
-.footer .sign-up-link, .footer .forgot-password-link {
+.footer .sign-up-link,
+.footer .forgot-password-link {
   font-weight: bold;
   margin-left: 5px;
+  position: relative;
+  z-index: 2;
 }
+
+.footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid #fff;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+.back-link {
+  position: absolute;
+  top: 10px; /* Sesuaikan dengan jarak dari atas */
+  left: 10px; /* Sesuaikan dengan jarak dari kiri */
+  color: white;
+  text-decoration: none;
+  z-index: 3; /* Atur nilai z-index yang lebih tinggi */
+}
+
+
 
 
 

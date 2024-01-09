@@ -81,6 +81,7 @@ blockquote {
   width: 100%;
   z-index: 1000;
   background-color: transparent;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
   transition: all 0.3s ease;
 }
 
@@ -146,7 +147,7 @@ blockquote {
 
 #infinite {
 	background-color: #222;
-  background-image: url(../img/sdn.jpg);
+  background-image: url(../img/bg-1.jpg);
   background-repeat: no-repeat;
   height: 100vh;
   min-height: 375px;
@@ -621,7 +622,8 @@ p {
   .navbar-expand-md .navbar-nav .nav-link {
     padding-right: 30px;
     padding-left: 30px;
-  }
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
+}
 }
 
 @media (min-width: 1200px) {
