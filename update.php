@@ -8,6 +8,13 @@
 <body>
 <div class="container">
     <?php
+    session_start();
+    
+    // Cek apakah pengguna sudah login
+    if (!isset($_SESSION['session_username'])) {
+        header("location: login.php");
+        exit();
+    }
 
     //Include file koneksi, untuk koneksikan ke database
     include "koneksi.php";

@@ -88,7 +88,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
     </div>
     <div class="right-footer">
         <p style="color: #808080;">
-             <a href="#" class="forgot-password-link" style="color: #808080;">Forgot password?</a>
+             <a href="forgot_password_bc.php" class="forgot-password-link" style="color: #808080;">Forgot password?</a>
         </p>
     </div>
 </div>

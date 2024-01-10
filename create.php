@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,6 +10,13 @@
     <?php
     //Include file koneksi, untuk koneksikan ke database
     include "koneksi.php";
+session_start();
+
+// Cek apakah pengguna sudah login
+if (!isset($_SESSION['session_username'])) {
+    header("location: login.php");
+    exit();
+}
 
     //Fungsi untuk mencegah inputan karakter yang tidak sesuai
     function input($data) {

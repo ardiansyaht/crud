@@ -103,7 +103,7 @@ if (isset($_POST['login'])) {
                         Sign Up?
 
                 <div class="text-center p-t-5">
-                    <a class="txt1" href="#">
+                    <a class="txt1" href="forgot_password.php">
                         Forgot Password?
                     </a>
                 </div>
