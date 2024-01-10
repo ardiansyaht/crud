@@ -46,14 +46,22 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
               <li class="nav-item">
                   <a class="nav-link tm-nav-link" href="#tentangkami">Tentang Kami</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link tm-nav-link" href="#gallery">Gallery</a>
+              <?php if (isset($_SESSION['session_email'])) { ?>
+    <li class="nav-item">
+        <a class="nav-link tm-nav-link" href="#gallery">Gallery</a>
+    </li>
+<?php } ?>
               <li class="nav-item">
                 <a class="nav-link tm-nav-link" href="#contact">Kontak Kami</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link tm-nav-link" href="login_bc.php">Login</a>
-              </li>
+             <?php
+            // Cek apakah pengguna sudah login
+           if (!isset($_SESSION['session_email'])) {
+        echo '<a class="nav-link tm-nav-link" href="login_bc.php">Login</a>';
+         }
+         ?>
+         </li>
               <!-- ... Bagian lain dari navigasi ... -->
               <?php if($userRole == 'admin') { ?>
             <!-- Tampilkan navlink Dashboard hanya untuk peran admin -->
@@ -152,7 +160,9 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                 
             </div><!-- third row -->
         </div>
-    <section id="gallery" class="tm-section-pad-top">
+        <?php
+        if (isset($_SESSION['session_role']) && $_SESSION['session_role'] === 'admin' || isset($_SESSION['session_email'])) {
+   echo '<section id="gallery" class="tm-section-pad-top">
       <div class="container tm-container-gallery">
         <div class="row">
           <div class="text-center col-12">
@@ -235,7 +245,9 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
             </div>        
           </div>
       </div>
-    </section>
+    </section>';
+        }
+        ?>
 
     <!-- Contact -->
     <section id="contact" class="tm-section-pad-top tm-parallax-2">

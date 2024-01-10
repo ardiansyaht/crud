@@ -1,6 +1,21 @@
 <?php
 require_once('tcpdf/tcpdf.php');
 include "koneksi.php"; // Pastikan file koneksi.php ada
+session_start();
+
+// Cek apakah pengguna sudah login
+if (!isset($_SESSION['session_username'])) {
+    header("location: login.php");
+    exit();
+}
+
+// Cek apakah peran pengguna adalah "admin"
+if ($_SESSION['session_role'] !== 'admin') {
+    // Redirect atau lakukan sesuatu jika peran bukan "admin"
+    // Contoh: redirect ke halaman tertentu atau tampilkan pesan error
+    header("location: unauthorized.php");
+    exit();
+}
 
 $pdf = new TCPDF();
 

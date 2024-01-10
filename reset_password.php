@@ -7,10 +7,10 @@ $pass_db    = "";
 $nama_db    = "crud";
 $koneksi    = mysqli_connect($host_db, $user_db, $pass_db, $nama_db);
 
-$err        = "";
-$username   = "";
-$password   = "";
-$confirmPassword = "";
+$err              = "";
+$username         = "";
+$password         = "";
+$confirmPassword  = "";
 
 if (isset($_POST['reset'])) {
     $token = $_GET['token'];
@@ -33,9 +33,11 @@ if (isset($_POST['reset'])) {
             // Cek apakah pengguna memiliki peran "admin"
             if ($userData['role'] === 'admin') {
                 $err .= "<li>Pengguna dengan peran admin tidak dapat mereset password.</li>";
+            } elseif ($userData['is_locked'] == 1) {
+                $err .= "<li>Akun Anda telah terkunci. Hubungi customer service untuk mereset password.</li>";
             } else {
-                // Reset password
-                $hashedPassword = md5($password);
+                // Reset password dengan SHA-1
+                $hashedPassword = sha1($password);
                 $sqlResetPassword = "UPDATE tb_login SET password = '$hashedPassword', reset_token = NULL, reset_token_expires = NULL WHERE reset_token = '$token' AND username = '$username'";
                 mysqli_query($koneksi, $sqlResetPassword);
 
@@ -47,8 +49,8 @@ if (isset($_POST['reset'])) {
         }
     }
 }
-
 ?>
+
 
 
 <!DOCTYPE html>

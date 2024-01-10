@@ -12,6 +12,20 @@ $koneksi    = mysqli_connect($host_db, $user_db, $pass_db, $nama_db);
 $err        = "";
 $username   = "";
 
+// Fungsi untuk menghitung percobaan login yang gagal
+function getFailedLoginAttempts($username, $koneksi) {
+    $sql = "SELECT failed_login_attempts FROM tb_login WHERE username = '$username'";
+    $result = mysqli_query($koneksi, $sql);
+    $row = mysqli_fetch_assoc($result);
+    return $row['failed_login_attempts'];
+}
+
+// Fungsi untuk mengupdate percobaan login yang gagal
+function updateFailedLoginAttempts($username, $koneksi, $attempts) {
+    $sql = "UPDATE tb_login SET failed_login_attempts = $attempts WHERE username = '$username'";
+    mysqli_query($koneksi, $sql);
+}
+
 if (isset($_POST['login'])) {
     $username   = $_POST['username'];
     $password   = $_POST['password'];
@@ -23,16 +37,44 @@ if (isset($_POST['login'])) {
         $q1   = mysqli_query($koneksi, $sql1);
         $r1   = mysqli_fetch_array($q1);
 
-        if (!$r1) {
+        // Mengecek apakah akun di-lock
+        if ($r1 && $r1['is_locked'] == 1) {
+            $err .= "<li>Akun Anda telah terkunci. Hubungi customer service.</li>";
+        } elseif (!$r1) {
             error_reporting(0);
             $err .= "<li>Username <b>$username</b> tidak tersedia.</li>";
         } elseif ($r1['password'] != md5($password)) {
-            $err .= "<li>Password yang dimasukkan tidak sesuai.</li>";
+            $failedAttempts = getFailedLoginAttempts($username, $koneksi);
+            
+            // Menambah percobaan login yang gagal
+            $failedAttempts++;
+
+            // Update percobaan login yang gagal
+            updateFailedLoginAttempts($username, $koneksi, $failedAttempts);
+
+            $err .= "<li>Password yang dimasukkan tidak sesuai. Percobaan ke-$failedAttempts.</li>";
+
+            // Mengecek apakah telah mencapai batas percobaan
+            if ($failedAttempts >= 5) {
+                $err .= "<li>Akun Anda akan terkunci setelah 10 percobaan gagal.</li>";
+            }
+
+            // Mengecek apakah harus mengunci akun
+            if ($failedAttempts >= 10) {
+                $err .= "<li>Akun Anda terkunci. Hubungi customer service.</li>";
+
+                // Mengunci akun
+                $sqlLockAccount = "UPDATE tb_login SET is_locked = 1 WHERE username = '$username'";
+                mysqli_query($koneksi, $sqlLockAccount);
+            }
         }
 
         if (empty($err)) {
+            // Reset percobaan login yang gagal
+            updateFailedLoginAttempts($username, $koneksi, 0);
+
             $_SESSION['session_username'] = $username;
-            $_SESSION['session_password'] = md5($password);
+            $_SESSION['session_password'] = sha1($password);
             $_SESSION['session_role'] = $r1['role'];
 
             header("location:infinite_loop/index.php");
@@ -41,6 +83,7 @@ if (isset($_POST['login'])) {
     }
 }
 ?>
+
 
 
 <!DOCTYPE html>
@@ -67,6 +110,11 @@ if (isset($_POST['login'])) {
     <div class="container-login100" style="background-image: url('login/images/bg-01.jpg');">
         <div class="wrap-login100">
             <form class="login100-form validate-form" method="post" action="">
+            <?php
+           if (!empty($err)) {
+           echo '<div class="alert alert-danger" role="alert">' . $err . '</div>';
+           }
+           ?>
                 <span class="login100-form-logo">
                     <i class="zmdi zmdi-landscape"></i>
                 </span>

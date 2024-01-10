@@ -42,7 +42,7 @@ if (isset($_POST['register'])) {
 
             if ($resultInsertUser) {
                 $_SESSION['session_username'] = $newUsername;
-                $_SESSION['session_password'] = $hashedPassword;
+                $hashedPassword = sha1($newPassword);
                 $_SESSION['session_role'] = $role;
 
                 header("location:login.php");

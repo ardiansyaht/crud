@@ -23,26 +23,32 @@ if (isset($_POST['reset'])) {
         if (mysqli_num_rows($resultCheckUser) > 0) {
             $userData = mysqli_fetch_assoc($resultCheckUser);
 
-            // Tentukan durasi waktu kedaluwarsa berdasarkan peran
-            $expirationTime = ($userData['role'] === 'admin') ? "1 SECOND" : "1 HOUR";
+            // Cek apakah akun terkunci
+            if ($userData['is_locked'] == 1) {
+                $err .= "<li>Akun Anda telah terkunci. Hubungi customer service untuk mereset password.</li>";
+            } else {
+                // Tentukan durasi waktu kedaluwarsa berdasarkan peran
+                $expirationTime = ($userData['role'] === 'admin') ? "1 SECOND" : "1 HOUR";
 
-            // Generate token untuk reset password
-            $resetToken = bin2hex(random_bytes(32));
-            $resetLink = "https://example.com/reset_password.php?token=$resetToken&username=$username";
+                // Generate token untuk reset password
+                $resetToken = bin2hex(random_bytes(32));
+                $resetLink = "https://example.com/reset_password.php?token=$resetToken&username=$username";
 
-            // Simpan token dan waktu kedaluwarsa di database
-            $sqlUpdateToken = "UPDATE tb_login SET reset_token = '$resetToken', reset_token_expires = DATE_ADD(NOW(), INTERVAL $expirationTime) WHERE username = '$username'";
-            mysqli_query($koneksi, $sqlUpdateToken);
+                // Simpan token dan waktu kedaluwarsa di database
+                $sqlUpdateToken = "UPDATE tb_login SET reset_token = '$resetToken', reset_token_expires = DATE_ADD(NOW(), INTERVAL $expirationTime) WHERE username = '$username'";
+                mysqli_query($koneksi, $sqlUpdateToken);
 
-            // Redirect ke halaman reset password
-            header("Location: reset_password.php?token=$resetToken&username=$username");
-            exit();
+                // Redirect ke halaman reset password
+                header("Location: reset_password.php?token=$resetToken&username=$username");
+                exit();
+            }
         } else {
             $err .= "<li>Username <b>$username</b> tidak terdaftar.</li>";
         }
     }
 }
 ?>
+
 
 
 

@@ -13,7 +13,18 @@
         <h4><center>DAFTAR PESERTA PELATIHAN</center></h4>
         
         <?php
+        
         include "koneksi.php";
+        if (!isset($_SESSION['session_username'])) {
+            header("location: login.php");
+            exit();
+        }
+        if ($_SESSION['session_role'] !== 'admin') {
+            // Redirect atau lakukan sesuatu jika peran bukan "admin"
+            // Contoh: redirect ke halaman tertentu atau tampilkan pesan error
+            header("location: unauthorized.php");
+            exit();
+        }
 
         //Cek apakah ada kiriman form dari method post
         if (isset($_GET['id_peserta'])) {

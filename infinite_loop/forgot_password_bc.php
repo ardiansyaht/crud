@@ -1,7 +1,12 @@
-<!-- forgot_password_bc.php -->
-
 <?php
 session_start();
+require 'vendor/autoload.php'; // Sesuaikan dengan lokasi dan nama folder Anda
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+
+
 
 $host_db        = "localhost";
 $user_db        = "root";
@@ -24,19 +29,46 @@ if (isset($_POST['forgot_password'])) {
         $sqlUpdateToken = "UPDATE $tabel_pengguna SET reset_token = '$resetToken', reset_token_expires = DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE email = '$email'";
         mysqli_query($koneksi, $sqlUpdateToken);
 
-        // Kirim email reset password (sesuaikan dengan kebutuhan)
-        $resetLink = "localhost/web 1/project-2/bootstrap/sb-admin/infinite_loop/reset_password_bc.php?token=$resetToken&email=$email";
-        // Implementasikan fungsi kirim email di sini
-        // ...
+        // Kirim email reset password menggunakan PHPMailer
+        $resetLink = "http://localhost/web-1/project-2/bootstrap/sb-admin/infinite_loop/reset_password_bc.php?token=$resetToken&email=$email";
 
-        // Tampilkan pesan sukses
-        $success_message = "Link reset password telah dikirim ke email Anda.";
+        $mail = new PHPMailer(true);
+
+        try {
+            // Pengaturan server SMTP Gmail
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'ardiansyah3151@gmail.com'; // Ganti dengan alamat email Gmail Anda
+            $mail->Password = 'piatkorcdqlkieds'; // Ganti dengan kata sandi Gmail Anda
+            $mail->SMTPSecure = 'ssl';
+            $mail->Port = 465;
+
+            // Pengaturan email
+            $mail->setFrom('ardiansyah3151@gmail.com', 'bang al'); // Ganti dengan alamat email dan nama Anda
+            $mail->addAddress($email); // Alamat email pengguna
+            $mail->Subject = 'Reset Your Password';
+            $mail->Body = "Click the following link to reset your password: $resetLink";
+
+            // Aktifkan output debugging
+            $mail->SMTPDebug = 0;
+
+            // Kirim email
+            $mail->send();
+
+            // Tampilkan pesan sukses
+            $success_message = "Link reset password telah dikirim ke email Anda.";
+        } catch (Exception $e) {
+            // Tampilkan pesan kesalahan jika email tidak dapat dikirim
+            $error_message = 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo;
+        }
     } else {
         // Tampilkan pesan bahwa email tidak terdaftar
         $error_message = "Email tidak terdaftar.";
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -73,6 +105,7 @@ if (isset($_POST['forgot_password'])) {
             <button type="submit" name="forgot_password">
                 <span>Reset Password</span>
             </button>
+            <p><a href="login_bc.php"><span class="lnr lnr-arrow-left"></span> Back to Login</a></p>
         </form>
         <img src="login-register/images/image-2.png" alt="" class="image-2">
     </div>

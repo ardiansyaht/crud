@@ -27,7 +27,7 @@ if (isset($_POST['reset_password'])) {
             $error_message = "Konfirmasi password tidak cocok.";
         } else {
             // Reset password
-            $hashedPassword = md5($password);
+            $hashedPassword = sha1($password);
             $sqlResetPassword = "UPDATE $tabel_pengguna SET password = '$hashedPassword', reset_token = NULL, reset_token_expires = NULL WHERE reset_token = '$token' AND email = '$email'";
             mysqli_query($koneksi, $sqlResetPassword);
 
@@ -47,7 +47,7 @@ if (isset($_POST['reset_password'])) {
     <title>Reset Password</title>
     <link rel="stylesheet" href="login-register/fonts/linearicons/style.css">
     <link rel="stylesheet" href="login-register/css/style.css">
-   
+    <!-- Tambahkan CSS sesuai kebutuhan -->
 </head>
 <body>
 
@@ -79,6 +79,7 @@ if (isset($_POST['reset_password'])) {
             <button type="submit" name="reset_password">
                 <span>Reset Password</span>
             </button>
+            <p><a href="login_bc.php"><span class="lnr lnr-arrow-left"></span> Back to Login</a></p> 
         </form>
         <img src="login-register/images/image-2.png" alt="" class="image-2">
     </div>
@@ -86,7 +87,8 @@ if (isset($_POST['reset_password'])) {
 
 <script src="login-register/js/jquery-3.3.1.min.js"></script>
 <script src="login-register/js/main.js"></script>
-
+<!-- Tambahkan script JS sesuai kebutuhan -->
 
 </body>
 </html>
+
