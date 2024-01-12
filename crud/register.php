@@ -36,13 +36,12 @@ if (isset($_POST['register'])) {
             $role = "users";
 
             // Simpan data pengguna baru ke database dengan peran
-            $hashedPassword = md5($newPassword);
+            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
             $sqlInsertUser = "INSERT INTO tb_login (username, password, role) VALUES ('$newUsername', '$hashedPassword', '$role')";
             $resultInsertUser = mysqli_query($koneksi, $sqlInsertUser);
 
             if ($resultInsertUser) {
                 $_SESSION['session_username'] = $newUsername;
-                $hashedPassword = sha1($newPassword);
                 $_SESSION['session_role'] = $role;
 
                 header("location:login.php");
@@ -55,22 +54,23 @@ if (isset($_POST['register'])) {
 }
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <!-- Tambahan CSS atau link ke file eksternal jika diperlukan -->
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <link rel="icon" type="image/png" href="login/images/icons/favicon.ico"/>
-	<link rel="stylesheet" type="text/css" href="login/vendor/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="login/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="login/fonts/iconic/css/material-design-iconic-font.min.css">
-	<link rel="stylesheet" type="text/css" href="login/vendor/animate/animate.css">
-	<link rel="stylesheet" type="text/css" href="login/vendor/css-hamburgers/hamburgers.min.css">
-	<link rel="stylesheet" type="text/css" href="login/vendor/animsition/css/animsition.min.css">
-	<link rel="stylesheet" type="text/css" href="login/vendor/select2/select2.min.css">
-	<link rel="stylesheet" type="text/css" href="login/vendor/daterangepicker/daterangepicker.css">
-	<link rel="stylesheet" type="text/css" href="login/css/util.css">
-	<link rel="stylesheet" type="text/css" href="login/css/main.css">
+    <link rel="icon" type="image/png" href="../login/images/icons/favicon.ico"/>
+	<link rel="stylesheet" type="text/css" href="../login/vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="../login/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="../login/fonts/iconic/css/material-design-iconic-font.min.css">
+	<link rel="stylesheet" type="text/css" href="../login/vendor/animate/animate.css">
+	<link rel="stylesheet" type="text/css" href="../login/vendor/css-hamburgers/hamburgers.min.css">
+	<link rel="stylesheet" type="text/css" href="../login/vendor/animsition/css/animsition.min.css">
+	<link rel="stylesheet" type="text/css" href="../login/vendor/select2/select2.min.css">
+	<link rel="stylesheet" type="text/css" href="../login/vendor/daterangepicker/daterangepicker.css">
+	<link rel="stylesheet" type="text/css" href="../login/css/util.css">
+	<link rel="stylesheet" type="text/css" href="../login/css/main.css">
     <style>
      
         
@@ -79,17 +79,14 @@ if (isset($_POST['register'])) {
         function validateForm() {
             var newPassword = document.getElementById("new-password").value;
             var confirmPassword = document.getElementById("confirm-password").value;
-
             if (newPassword.length < 5) {
                 alert("Kata sandi harus terdiri dari minimal 5 karakter.");
                 return false;
             }
-
             if (newPassword !== confirmPassword) {
                 alert("Konfirmasi kata sandi tidak cocok.");
                 return false;
             }
-
             return true;
         }
     </script>
@@ -153,14 +150,14 @@ if (isset($_POST['register'])) {
         </div>
     </div>
     <!-- <script src="login/vendor/jquery/jquery-3.2.1.min.js"></script> -->
-	<script src="login/vendor/animsition/js/animsition.min.js"></script>
-	<script src="login/vendor/bootstrap/js/popper.js"></script>
-	<script src="login/vendor/bootstrap/js/bootstrap.min.js"></script>
-	<script src="login/vendor/select2/select2.min.js"></script>
-	<script src="login/vendor/daterangepicker/moment.min.js"></script>
-	<script src="login/vendor/daterangepicker/daterangepicker.js"></script>
-	<script src="login/vendor/countdowntime/countdowntime.js"></script>
-	<script src="login/js/main.js"></script>
+	<script src="../login/vendor/animsition/js/animsition.min.js"></script>
+	<script src="../login/vendor/bootstrap/js/popper.js"></script>
+	<script src="../login/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="../login/vendor/select2/select2.min.js"></script>
+	<script src="../login/vendor/daterangepicker/moment.min.js"></script>
+	<script src="../login/vendor/daterangepicker/daterangepicker.js"></script>
+	<script src="../login/vendor/countdowntime/countdowntime.js"></script>
+	<script src="../login/js/main.js"></script>
 
 </body>
 </html>

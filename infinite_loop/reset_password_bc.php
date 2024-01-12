@@ -17,28 +17,48 @@ if (isset($_POST['reset_password'])) {
     $confirmPassword = $_POST['confirm_password'];
 
     // Periksa token dan waktu kedaluwarsa
-    $sqlCheckToken = "SELECT * FROM $tabel_pengguna WHERE reset_token = '$token' AND reset_token_expires > NOW() AND email = '$email'";
-    $resultCheckToken = mysqli_query($koneksi, $sqlCheckToken);
+    $sqlCheckToken = "SELECT * FROM $tabel_pengguna WHERE reset_token = ? AND reset_token_expires > NOW() AND email = ?";
+    $stmt = mysqli_prepare($koneksi, $sqlCheckToken);
 
-    if (mysqli_num_rows($resultCheckToken) > 0) {
-        if (strlen($password) < 5) {
-            $error_message = "Password harus terdiri dari minimal 5 karakter.";
-        } elseif ($password != $confirmPassword) {
-            $error_message = "Konfirmasi password tidak cocok.";
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, "ss", $token, $email);
+        mysqli_stmt_execute($stmt);
+
+        $resultCheckToken = mysqli_stmt_get_result($stmt);
+
+        if (mysqli_num_rows($resultCheckToken) > 0) {
+            if (strlen($password) < 5) {
+                $error_message = "Password harus terdiri dari minimal 5 karakter.";
+            } elseif ($password != $confirmPassword) {
+                $error_message = "Konfirmasi password tidak cocok.";
+            } else {
+                // Reset password menggunakan password_hash
+                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                $sqlResetPassword = "UPDATE $tabel_pengguna SET password = ?, reset_token = NULL, reset_token_expires = NULL WHERE reset_token = ? AND email = ?";
+                $stmtReset = mysqli_prepare($koneksi, $sqlResetPassword);
+
+                if ($stmtReset) {
+                    mysqli_stmt_bind_param($stmtReset, "sss", $hashedPassword, $token, $email);
+                    mysqli_stmt_execute($stmtReset);
+
+                    // Tampilkan pesan sukses
+                    $success_message = "Password berhasil direset. Silakan login.";
+                } else {
+                    $error_message = "Gagal menyiapkan pernyataan reset password.";
+                }
+            }
         } else {
-            // Reset password
-            $hashedPassword = sha1($password);
-            $sqlResetPassword = "UPDATE $tabel_pengguna SET password = '$hashedPassword', reset_token = NULL, reset_token_expires = NULL WHERE reset_token = '$token' AND email = '$email'";
-            mysqli_query($koneksi, $sqlResetPassword);
-
-            // Tampilkan pesan sukses
-            $success_message = "Password berhasil direset. Silakan login.";
+            $error_message = "Token reset password tidak valid atau telah kedaluwarsa.";
         }
+
+        mysqli_stmt_close($stmt);
+        mysqli_stmt_close($stmtReset);
     } else {
-        $error_message = "Token reset password tidak valid atau telah kedaluwarsa.";
+        $error_message = "Gagal menyiapkan pernyataan pengecekan token.";
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -79,7 +99,7 @@ if (isset($_POST['reset_password'])) {
             <button type="submit" name="reset_password">
                 <span>Reset Password</span>
             </button>
-            <p><a href="login_bc.php"><span class="lnr lnr-arrow-left"></span> Back to Login</a></p> 
+           
         </form>
         <img src="login-register/images/image-2.png" alt="" class="image-2">
     </div>
@@ -87,8 +107,17 @@ if (isset($_POST['reset_password'])) {
 
 <script src="login-register/js/jquery-3.3.1.min.js"></script>
 <script src="login-register/js/main.js"></script>
-<!-- Tambahkan script JS sesuai kebutuhan -->
 
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        <?php if (isset($success_message)) { ?>
+            setTimeout(function() {
+                window.close(); 
+            }, 3000); 
+        <?php } ?>
+    });
+</script>
 </body>
 </html>
 

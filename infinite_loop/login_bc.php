@@ -24,19 +24,18 @@ function updateFailedLoginAttempts($email, $koneksi, $attempts) {
     mysqli_query($koneksi, $sql);
 }
 
+// Fungsi untuk menghapus akun yang belum diverifikasi dalam waktu 2 menit
+function deleteUnverifiedAccounts($koneksi) {
+    $sqlDeleteUnverified = "DELETE FROM tb_login_bc WHERE status = 'notverified' AND registration_time < NOW() - INTERVAL 1 HOUR";
+    mysqli_query($koneksi, $sqlDeleteUnverified);
+}
+
+// Panggil fungsi penghapusan otomatis
+deleteUnverifiedAccounts($koneksi);
+
 if (isset($_POST['login'])) {
     $email    = $_POST['email'];
-    if (isset($_POST['password'])) {
-        $password = $_POST['password'];
-    } else {
-        // Handle jika 'password' tidak ada dalam $_POST
-        // Misalnya, set nilai default atau tampilkan pesan kesalahan
-        $password = ""; // Atau sesuaikan dengan kebutuhan
-        echo "Password tidak ditemukan dalam data POST.";
-    }
-    
-
-    $hashedPassword = sha1($password);
+    $password = $_POST['password'];
 
     $sql1 = "SELECT * FROM tb_login_bc WHERE email = '$email'";
     $q1   = mysqli_query($koneksi, $sql1);
@@ -48,7 +47,7 @@ if (isset($_POST['login'])) {
     } elseif (!$r1) {
         error_reporting(0);
         $err .= "<li>Email <b>$email</b> tidak tersedia.</li>";
-    } elseif ($r1['password'] != $hashedPassword) {
+    } elseif (!password_verify($password, $r1['password'])) {
         $failedAttempts = getFailedLoginAttempts($email, $koneksi);
 
         // Menambah percobaan login yang gagal
@@ -75,26 +74,29 @@ if (isset($_POST['login'])) {
     }
 
     if (empty($err)) {
-        // Reset percobaan login yang gagal
-        updateFailedLoginAttempts($email, $koneksi, 0);
+        // Cek status verifikasi
+        if ($r1['status'] != 'verified') {
+            // Akun belum diverifikasi
+            $_SESSION['email_for_verification'] = $email; 
+            $err .= "<li>Akun Anda belum diverifikasi. Silakan <a href='verification.php'>verifikasi</a> terlebih dahulu.</li>";
+        } else {
+            // Reset percobaan login yang gagal
+            updateFailedLoginAttempts($email, $koneksi, 0);
 
-        $_SESSION['session_email'] = $email;
-        $_SESSION['session_password'] = $hashedPassword;
-        $_SESSION['session_role'] = $r1['role'];
+            $_SESSION['session_email'] = $email;
+            $_SESSION['session_role'] = $r1['role'];
 
-        header("location:index.php");
-        exit();
+            header("location:index.php");
+            exit();
+        }
     }
 }
-
 if (!isset($_SESSION['session_username'])) {
-    header("location: ../login.php");
+    header("location: ../crud/login.php");
     exit();
 }
 $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
 ?>
-
-
 
 <!DOCTYPE html>
 <html>
@@ -167,8 +169,6 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
         </p>
     </div>
 </div>
-
-
 
             <!-- End Footer Section -->
         </form>

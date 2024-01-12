@@ -1,5 +1,5 @@
 <?php
-require_once('tcpdf/tcpdf.php');
+require_once('../tcpdf/tcpdf.php');
 include "koneksi.php"; // Pastikan file koneksi.php ada
 session_start();
 

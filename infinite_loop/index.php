@@ -3,7 +3,7 @@ session_start();
 
 // Cek apakah pengguna sudah login
 if (!isset($_SESSION['session_username'])) {
-    header("location: ../login.php");
+    header("location: ../crud/login.php");
     exit();
 }
 $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
@@ -46,7 +46,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
               <li class="nav-item">
                   <a class="nav-link tm-nav-link" href="#tentangkami">Tentang Kami</a>
               </li>
-              <?php if (isset($_SESSION['session_email'])) { ?>
+              <?php  if (isset($_SESSION['session_role']) && $_SESSION['session_role'] === 'admin' || isset($_SESSION['session_email'])) { ?>
     <li class="nav-item">
         <a class="nav-link tm-nav-link" href="#gallery">Gallery</a>
     </li>
@@ -66,7 +66,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
               <?php if($userRole == 'admin') { ?>
             <!-- Tampilkan navlink Dashboard hanya untuk peran admin -->
             <li class="nav-item">
-                <a class="nav-link tm-nav-link" href="../dashboard.php">Dashboard</a>
+                <a class="nav-link tm-nav-link" href="../crud/dashboard.php">Dashboard</a>
             </li>
         <?php } ?>
             </li> 
@@ -526,10 +526,10 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
 
         $.ajax({
             type: "POST",
-            url: "../logout.php", // Gantilah dengan URL yang sesuai
+            url: "../crud/logout.php", // Gantilah dengan URL yang sesuai
             success: function(response) {
                 // Redirect ke halaman login setelah logout
-                window.location.href = "../login.php";
+                window.location.href = "../crud/login.php";
             },
             error: function(error) {
                 console.error("Error during logout:", error);

@@ -26,7 +26,7 @@ if ($_SESSION['session_role'] !== 'admin') {
         <meta name="author" content="" />
         <title></title>
         <!-- <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" /> -->
-        <link href="css/styles.css" rel="stylesheet" />
+        <link href="../css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     </head>
     <body class="sb-nav-fixed">
@@ -95,7 +95,7 @@ if ($_SESSION['session_role'] !== 'admin') {
                             
 
                             <div class="sb-sidenav-menu-heading">Addons</div>
-                            <a class="nav-link" href="infinite_loop/index.php">
+                            <a class="nav-link" href="../infinite_loop/index.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                                 Halaman Utama
                             </a>
@@ -147,12 +147,12 @@ if ($_SESSION['session_role'] !== 'admin') {
 
                                
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script src="js/scripts.js"></script>
+        <script src="../js/scripts.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-        <script src="assets/demo/chart-area-demo.js"></script>
-        <script src="assets/demo/chart-bar-demo.js"></script>
+        <script src="../assets/demo/chart-area-demo.js"></script>
+        <script src="../assets/demo/chart-bar-demo.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-        <script src="js/datatables-simple-demo.js"></script>
+        <script src="../js/datatables-simple-demo.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
     </body>
