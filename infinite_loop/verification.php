@@ -46,7 +46,7 @@ if (isset($_POST['resend_code'])) {
             $mail->Port = 465;
 
             // Pengaturan email
-            $mail->setFrom('ardiansyah3151@gmail.com', 'bang al'); // Ganti dengan alamat email dan nama Anda
+            $mail->setFrom('ardiansyah3151@gmail.com', 'Code'); // Ganti dengan alamat email dan nama Anda
             $mail->addAddress($email_resend); // Alamat email pengguna
             $mail->Subject = 'Resend Code Verification';
             $mail->Body = "Kode verifikasi Anda: $otp_code  Code OTP akan kadaluarsa dalam 2 menit";

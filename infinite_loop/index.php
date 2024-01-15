@@ -1,5 +1,43 @@
 <?php 
 session_start();
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'vendor/autoload.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $message = $_POST['message'];
+
+    $mail = new PHPMailer(true);
+
+    try {
+        // Pengaturan server SMTP Gmail
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'ardiansyah3151@gmail.com'; // Ganti dengan alamat email Gmail Anda
+        $mail->Password = 'riiknwzqbhudrhtm'; // Ganti dengan kata sandi Gmail Anda
+        $mail->SMTPSecure = 'ssl';
+        $mail->Port = 465;
+
+        // Pengaturan email
+        $mail->setFrom($email, $name);
+        $mail->addAddress('ardiansyah3151@gmail.com'); // Alamat email tujuan (dalam hal ini, email Anda sendiri)
+        $mail->Subject = 'New Contact Form Submission';
+        $mail->Body = "Name: $name\nEmail: $email\nMessage: $message";
+
+        // Kirim email
+        $mail->send();
+
+       
+    } catch (Exception $e) {      
+    }
+} else {
+}
+
+
 
 // Cek apakah pengguna sudah login
 if (!isset($_SESSION['session_username'])) {
@@ -9,6 +47,7 @@ if (!isset($_SESSION['session_username'])) {
 $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -16,12 +55,15 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Bootcamp</title>
+    <link rel="icon" type="image/png" href="img/favicon.ico"/>
     <link rel="stylesheet" href="fontawesome-5.5/css/all.min.css" />
     <link rel="stylesheet" href="slick/slick.css">
     <link rel="stylesheet" href="slick/slick-theme.css">
     <link rel="stylesheet" href="magnific-popup/magnific-popup.css">
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/tooplate-infinite-loop.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
 
 
   </head>
@@ -46,11 +88,11 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
               <li class="nav-item">
                   <a class="nav-link tm-nav-link" href="#tentangkami">Tentang Kami</a>
               </li>
-              <?php  if (isset($_SESSION['session_role']) && $_SESSION['session_role'] === 'admin' || isset($_SESSION['session_email'])) { ?>
+             
     <li class="nav-item">
         <a class="nav-link tm-nav-link" href="#gallery">Gallery</a>
     </li>
-<?php } ?>
+
               <li class="nav-item">
                 <a class="nav-link tm-nav-link" href="#contact">Kontak Kami</a>
               </li>
@@ -74,7 +116,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
               <li class="nav-item">
     <a class="nav-link tm-nav-link" href="#logout" id="logoutLink">Logout</a>
 </li>
-                    
+               
             </ul>
           </div>        
         </div>
@@ -156,19 +198,20 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                         TechForge Academy terus berkomitmen untuk menjadi wadah pembelajaran yang inspiratif dan berkualitas.</p>
                         </div>
                     </div>
-                </div>
-                
+                </div>   
             </div><!-- third row -->
         </div>
         <?php
-        if (isset($_SESSION['session_role']) && $_SESSION['session_role'] === 'admin' || isset($_SESSION['session_email'])) {
-   echo '<section id="gallery" class="tm-section-pad-top">
+        echo '<section id="gallery" class="tm-section-pad-top">
       <div class="container tm-container-gallery">
         <div class="row">
           <div class="text-center col-12">
-              <h2 class="tm-text-primary tm-section-title mb-4">Gallery</h2>
+              <h2 class="tm-text-primary tm-section-title mb-4">BOOTCAMP</h2>
               <p class="mx-auto tm-section-desc">
-                Praesent sed pharetra lorem, blandit convallis mi. Aenean ornare elit ac metus lacinia, sed iaculis nibh semper. Pellentesque est urna, lobortis eu arcu a, aliquet tristique urna.
+              Daftar sekarang dan sambut tantangan baru dalam perjalanan menuju keahlian di dunia IT! 
+              Bergabunglah dengan bootcamp kami dan tingkatkan keterampilan teknologi Anda, temukan wawasan mendalam, 
+              dan bangun fondasi yang kokoh untuk karier Anda di dunia digital. Bersama-sama, kita akan menjelajahi, 
+              belajar, dan tumbuh menjadi pemimpin di industri teknologi informasi. Daftar sekarang dan jadilah bagian dari revolusi digital!
               </p>
           </div>            
         </div>
@@ -176,67 +219,67 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
             <div class="col-12">
                 <div class="mx-auto tm-gallery-container">
                     <div class="grid tm-gallery">
-                      <a href="img/gallery-img-01.jpg">
+                    <a href="#" onclick="checkLogin()">
                         <figure class="effect-honey tm-gallery-item">
                           <img src="img/gallery-tn-01.jpg" alt="Image 1" class="img-fluid">
                           <figcaption>
-                            <h2><i>Physical Health <span>Exercise!</span></i></h2>
+                            <h2><i>Web Development <span></span></i></h2>
                           </figcaption>
                         </figure>
                       </a>
-                      <a href="img/gallery-img-02.jpg">
+                      <a href="#" onclick="checkLogin()">
                         <figure class="effect-honey tm-gallery-item">
                           <img src="img/gallery-tn-02.jpg" alt="Image 2" class="img-fluid">
                           <figcaption>
-                            <h2><i>Rain on Glass <span>Second Image</span></i></h2>
+                            <h2><i>Data Science <span></span></i></h2>
                           </figcaption>
                         </figure>
                       </a>
-                      <a href="img/gallery-img-03.jpg">
+                      <a href="#" onclick="checkLogin()">
                         <figure class="effect-honey tm-gallery-item">
                           <img src="img/gallery-tn-03.jpg" alt="Image 3" class="img-fluid">
                           <figcaption>
-                            <h2><i><span>Sea View</span> Mega City</i></h2>
+                            <h2><i>Full Stack Development<span></span></i></h2>
                           </figcaption>
                         </figure>
                       </a>
-                      <a href="img/gallery-img-04.jpg">
+                      <a href="#" onclick="checkLogin()">
                         <figure class="effect-honey tm-gallery-item">
                           <img src="img/gallery-tn-04.jpg" alt="Image 4" class="img-fluid">
                           <figcaption>
-                            <h2><i>Dream Girl <span>Thoughts</span></i></h2>
+                            <h2><i>Mobile App Development<span></span></i></h2>
                           </figcaption>
                         </figure>
                       </a>
-                      <a href="img/gallery-img-05.jpg">
+                      <a href="#" onclick="checkLogin()">
                         <figure class="effect-honey tm-gallery-item">
                           <img src="img/gallery-tn-05.jpg" alt="Image 5" class="img-fluid">
                           <figcaption>
-                            <h2><i><span>Workstation</span> Offices</i></h2>
+                            <h2><i>Cyber Security<span></span></i></h2>
                           </figcaption>
                         </figure>
                       </a>
-                      <a href="img/gallery-img-06.jpg">
+                      <a href="#" onclick="checkLogin()">
                         <figure class="effect-honey tm-gallery-item">
                           <img src="img/gallery-tn-06.jpg" alt="Image 6" class="img-fluid">
                           <figcaption>
-                            <h2><i>Just Above <span>The City</span></i></h2>
+                            <h2><i>Devs  <span>OPS</span></i></h2>
                           </figcaption>
                         </figure>
                       </a>
-                      <a href="img/gallery-img-01.jpg">
+                      <a href="#" onclick="checkLogin()">
                         <figure class="effect-honey tm-gallery-item">
-                          <img src="img/gallery-tn-01.jpg" alt="Image 7" class="img-fluid">
+                          <img src="img/gallery-tn-07.jpg" alt="Image 7" class="img-fluid">
                           <figcaption>
-                            <h2><i>Another <span>Exercise Time</span></i></h2>
+                            <h2><i>UI/UX Design<span></span></i></h2>
                           </figcaption>
                         </figure>
                       </a>
-                      <a href="img/gallery-img-02.jpg">
+                      <a href="#" onclick="checkLogin()">
                         <figure class="effect-honey tm-gallery-item">
-                          <img src="img/gallery-tn-02.jpg" alt="Image 8" class="img-fluid">
+                          <img src="img/gallery-tn-08.jpg" alt="Image 8" class="img-fluid">
                           <figcaption>
-                            <h2><i>Repeated <span>Image Spot</span></i></h2>
+                            <h2><i>Game Development <span></span></i></h2>
                           </figcaption>
                         </figure>
                       </a>
@@ -245,9 +288,26 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
             </div>        
           </div>
       </div>
-    </section>';
-        }
-        ?>
+    </section>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    function checkLogin() {
+        '. (!isset($_SESSION['session_email']) && (!isset($_SESSION['session_role']) || $_SESSION['session_role'] !== 'admin')? '
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Silakan login terlebih dahulu."
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "index.php"; // Ganti dengan path menuju halaman login
+                }
+            }); return false;' : 'window.location.href = "../crud/create.php";')
+        .'
+    }
+</script>';
+
+
+?>
 
     <!-- Contact -->
     <section id="contact" class="tm-section-pad-top tm-parallax-2">
@@ -260,14 +320,14 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                 <h2 class="tm-section-title mb-4">Contact Us</h2>
             </div>
             
-            <!-- <div class="col-sm-12 col-md-6">
-              <form action="" method="get">
-                <input id="name" name="name" type="text" placeholder="Your Name" class="tm-input" required />
-                <input id="email" name="email" type="email" placeholder="Your Email" class="tm-input" required />
-                <textarea id="message" name="message" rows="8" placeholder="Message" class="tm-input" required></textarea>
-                <button type="submit" class="btn tm-btn-submit">Submit</button>
-              </form>
-            </div> -->
+            <div class="col-sm-12 col-md-6">
+        <form id="contactForm" action="" method="post">
+            <input id="name" name="name" type="text" placeholder="Your Name" class="tm-input" required />
+            <input id="email" name="email" type="email" placeholder="Your Email" class="tm-input" required />
+            <textarea id="message" name="message" rows="8" placeholder="Message" class="tm-input" required></textarea>
+            <button type="submit" class="btn tm-btn-submit">Submit</button>
+        </form>
+    </div>
             
             <div class="row">
               <div class="col-sm-12 col-md-6">
@@ -282,7 +342,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                   <div class="contact-item">
                       <a rel="nofollow" href="sdnbalabala@gmail.com" class="item-link">
                           <i class="far fa-2x fa-envelope mr-4"></i>
-                          <span class="mb-0">sdnbalabala@gmail.com</span>
+                          <span class="mb-0">ardiansyah3151@gmail.com</span>
                       </a>              
                   </div>
                   
@@ -303,24 +363,18 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                   <div class="contact-item">&nbsp;</div>
               
               </div>
-          </div>
-          
-            
-            
-        </div><!-- row ending -->
-        
+          </div> 
+            <!-- row ending -->
+        </div>
       </div>
-
       	<footer class="text-center small tm-footer">
           <p class="mb-0">
           Copyright &copy; 2023 SDN Bala-bala 
-          
           .</p>
         </footer>
-
     </section>
     
-    <!-- <script src="js/jquery-1.9.1.min.js"></script>      -->
+    <script src="js/jquery-1.9.1.min.js"></script>     
     <script src="slick/slick.min.js"></script>
     <script src="magnific-popup/jquery.magnific-popup.min.js"></script>
     <script src="js/easing.min.js"></script>
@@ -538,6 +592,26 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
         });
     }
 </script>
+<script>
+    document.getElementById('contactForm').addEventListener('submit', function (e) {
+        e.preventDefault();
 
+        // Simpan formulir dalam variabel
+        var form = this;
+
+        // Kirim formulir secara synchronous (non-Ajax)
+        form.submit();
+
+        // Tambahkan notifikasi SweetAlert
+        Swal.fire({
+            title: 'Form Submitted!',
+            text: 'Your form has been submitted successfully.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+    });
+</script>
+
+    
   </body>
 </html>
