@@ -91,9 +91,7 @@ if ($_SESSION['session_role'] !== 'admin') {
                             <a class="nav-link" href="dashboard.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Dashboard
-                            </a>
-                            
-
+                            </a>                    
                             <div class="sb-sidenav-menu-heading">Addons</div>
                             <a class="nav-link" href="../infinite_loop/index.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>

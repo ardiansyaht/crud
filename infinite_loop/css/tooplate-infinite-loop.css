@@ -39,7 +39,8 @@ blockquote {
 
 .tm-section-pad-top {
   padding-top: 80px;
-  padding-bottom: 40px;
+  padding-bottom: 0px;
+  
 }
 
 .tm-content-box {
@@ -67,7 +68,7 @@ blockquote {
   background-color: #38B;
 }
 
-/* Navbar */
+
 
 .tm-navbar {
   position: fixed;
@@ -236,7 +237,7 @@ blockquote {
   padding: 20px 50px;
 }
 
-/* Introduction */
+
 
 #introduction {
   padding-bottom: 100px;
@@ -260,7 +261,6 @@ blockquote {
 	padding: 20px 0 30px 0;
 }
 
-/* Testimonials */
 #testimonials {
   color: white;
   background-image: url(../img/infinite-loop-02.jpg);
@@ -315,7 +315,7 @@ blockquote {
   font-size: 1.1rem;
 }
 
-/* Work */
+
 
 .tm-section-desc {
   max-width: 650px;
@@ -363,8 +363,7 @@ blockquote {
   font-size: 18px;
 }
 
-/* Hover Effect */
-/* Common style */
+
 .grid figure {
   position: relative;
   float: left;
@@ -405,8 +404,7 @@ blockquote {
   height: 100%;
 }
 
-/* Anchor will cover the whole item by default */
-/* For some effects it will show as a button */
+
 .grid figure figcaption > a {
   z-index: 1000;
   text-indent: 200%;
@@ -435,9 +433,6 @@ blockquote {
   font-size: 68.5%;
 }
 
-/*---------------*/
-/***** Honey *****/
-/*---------------*/
 
 figure.effect-honey {
   background: #4a3753;
@@ -504,7 +499,7 @@ figure.effect-honey:hover h2 i {
 	padding-top: 30px;
 	}
 
-/* Contact */
+
 
 #contact {
   color: white;
@@ -565,18 +560,18 @@ figure.effect-honey:hover h2 i {
 }
 
 ::placeholder {
-  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  
   color: white;
-  opacity: 1; /* Firefox */
+  opacity: 1; 
 }
 
 :-ms-input-placeholder {
-  /* Internet Explorer 10-11 */
+  
   color: white;
 }
 
 ::-ms-input-placeholder {
-  /* Microsoft Edge */
+  
   color: white;
 }
 

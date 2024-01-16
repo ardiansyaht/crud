@@ -6,9 +6,10 @@ use PHPMailer\PHPMailer\Exception;
 require 'vendor/autoload.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $message = $_POST['message'];
+  $name = htmlspecialchars($_POST['name']);
+  $email = htmlspecialchars($_POST['email']);
+  $message = htmlspecialchars($_POST['message']);
+  
 
     $mail = new PHPMailer(true);
 
@@ -30,14 +31,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Kirim email
         $mail->send();
-
-       
     } catch (Exception $e) {      
     }
 } else {
 }
-
-
 
 // Cek apakah pengguna sudah login
 if (!isset($_SESSION['session_username'])) {
@@ -46,8 +43,6 @@ if (!isset($_SESSION['session_username'])) {
 }
 $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -87,12 +82,10 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
               </li>
               <li class="nav-item">
                   <a class="nav-link tm-nav-link" href="#tentangkami">Tentang Kami</a>
-              </li>
-             
-    <li class="nav-item">
-        <a class="nav-link tm-nav-link" href="#gallery">Gallery</a>
-    </li>
-
+              </li>    
+             <li class="nav-item">
+             <a class="nav-link tm-nav-link" href="#gallery">Daftar</a>
+             </li>
               <li class="nav-item">
                 <a class="nav-link tm-nav-link" href="#contact">Kontak Kami</a>
               </li>
@@ -104,9 +97,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
          }
          ?>
          </li>
-              <!-- ... Bagian lain dari navigasi ... -->
               <?php if($userRole == 'admin') { ?>
-            <!-- Tampilkan navlink Dashboard hanya untuk peran admin -->
             <li class="nav-item">
                 <a class="nav-link tm-nav-link" href="../crud/dashboard.php">Dashboard</a>
             </li>
@@ -181,9 +172,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                         ,Menyediakan akses pendidikan pemrograman yang inklusif dan berkelanjutan bagi semua lapisan masyarakat.</p>
                     </div>
                 </div>
-
-            </div><!-- second row -->
-            
+            </div><!-- second row -->        
             <div class="row tm-content-box"><!-- third row -->
         		<div class="col-lg-1">
                     <i class="fas fa-3x fa-school text-center tm-icon"></i>
@@ -223,7 +212,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                         <figure class="effect-honey tm-gallery-item">
                           <img src="img/gallery-tn-01.jpg" alt="Image 1" class="img-fluid">
                           <figcaption>
-                            <h2><i>Web Development <span></span></i></h2>
+                            <h2><i>Web  <span>Development</span></i></h2>
                           </figcaption>
                         </figure>
                       </a>
@@ -231,7 +220,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                         <figure class="effect-honey tm-gallery-item">
                           <img src="img/gallery-tn-02.jpg" alt="Image 2" class="img-fluid">
                           <figcaption>
-                            <h2><i>Data Science <span></span></i></h2>
+                            <h2><i>Data  <span>Science</span></i></h2>
                           </figcaption>
                         </figure>
                       </a>
@@ -239,7 +228,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                         <figure class="effect-honey tm-gallery-item">
                           <img src="img/gallery-tn-03.jpg" alt="Image 3" class="img-fluid">
                           <figcaption>
-                            <h2><i>Full Stack Development<span></span></i></h2>
+                            <h2><i>Full Stack <span>Development</span></i></h2>
                           </figcaption>
                         </figure>
                       </a>
@@ -247,7 +236,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                         <figure class="effect-honey tm-gallery-item">
                           <img src="img/gallery-tn-04.jpg" alt="Image 4" class="img-fluid">
                           <figcaption>
-                            <h2><i>Mobile App Development<span></span></i></h2>
+                            <h2><i>Mobile App <span>Development</span></i></h2>
                           </figcaption>
                         </figure>
                       </a>
@@ -255,7 +244,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                         <figure class="effect-honey tm-gallery-item">
                           <img src="img/gallery-tn-05.jpg" alt="Image 5" class="img-fluid">
                           <figcaption>
-                            <h2><i>Cyber Security<span></span></i></h2>
+                            <h2><i>Cyber <span>Security</span></i></h2>
                           </figcaption>
                         </figure>
                       </a>
@@ -271,7 +260,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                         <figure class="effect-honey tm-gallery-item">
                           <img src="img/gallery-tn-07.jpg" alt="Image 7" class="img-fluid">
                           <figcaption>
-                            <h2><i>UI/UX Design<span></span></i></h2>
+                            <h2><i>UI/UX <span>Design</span></i></h2>
                           </figcaption>
                         </figure>
                       </a>
@@ -279,7 +268,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                         <figure class="effect-honey tm-gallery-item">
                           <img src="img/gallery-tn-08.jpg" alt="Image 8" class="img-fluid">
                           <figcaption>
-                            <h2><i>Game Development <span></span></i></h2>
+                            <h2><i>Game  <span>Development</span></i></h2>
                           </figcaption>
                         </figure>
                       </a>
@@ -305,10 +294,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
         .'
     }
 </script>';
-
-
 ?>
-
     <!-- Contact -->
     <section id="contact" class="tm-section-pad-top tm-parallax-2">
     
@@ -324,7 +310,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
         <form id="contactForm" action="" method="post">
             <input id="name" name="name" type="text" placeholder="Your Name" class="tm-input" required />
             <input id="email" name="email" type="email" placeholder="Your Email" class="tm-input" required />
-            <textarea id="message" name="message" rows="8" placeholder="Message" class="tm-input" required></textarea>
+            <textarea id="message" name="message" rows="8" placeholder="Message" class="tm-input" maxlength="255" required></textarea>
             <button type="submit" class="btn tm-btn-submit">Submit</button>
         </form>
     </div>
@@ -340,7 +326,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                   </div>
                   
                   <div class="contact-item">
-                      <a rel="nofollow" href="sdnbalabala@gmail.com" class="item-link">
+                      <a rel="nofollow" href="" class="item-link">
                           <i class="far fa-2x fa-envelope mr-4"></i>
                           <span class="mb-0">ardiansyah3151@gmail.com</span>
                       </a>              
@@ -354,7 +340,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                   </div>
                   
                   <div class="contact-item">
-                      <a rel="nofollow" href="tel:6281912388170" class="item-link">
+                      <a rel="nofollow" href="" class="item-link">
                           <i class="fas fa-2x fa-phone-square mr-4"></i>
                           <span class="mb-0">6281912388170</span>
                       </a>              
@@ -369,7 +355,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
       </div>
       	<footer class="text-center small tm-footer">
           <p class="mb-0">
-          Copyright &copy; 2023 SDN Bala-bala 
+          Copyright &copy; 2023 TechForge Academy 
           .</p>
         </footer>
     </section>
@@ -381,6 +367,26 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
     <script src="js/jquery.singlePageNav.min.js"></script>     
     <script src="js/bootstrap.min.js"></script> 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+    document.getElementById("contactForm").addEventListener("submit", function(event) {
+        var nameInput = document.getElementById("name");
+        var emailInput = document.getElementById("email");
+        var messageInput = document.getElementById("message");
+
+        // Melakukan encoding pada nilai input sebelum mengirimkan formulir
+        nameInput.value = encodeHTML(nameInput.value);
+        emailInput.value = encodeHTML(emailInput.value);
+        messageInput.value = encodeHTML(messageInput.value);
+    });
+
+    function encodeHTML(input) {
+        return input.replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#39;");
+    }
+</script>
     <script>
 
       function getOffSet(){
