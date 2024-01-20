@@ -52,9 +52,9 @@ if ($_SESSION['session_role'] !== 'admin') {
     if (mysqli_num_rows($result_cek_peserta) > 0) {
         // Email sudah terdaftar di tb_peserta, beri respons atau tindakan yang sesuai
         $notification = "Anda sudah mengisi formulir pendaftaran.";
+        
+        // Replace the following line with the SweetAlert code
         echo json_encode(array('success' => false, 'error' => $notification));
-
-        // Redirect ke index.php setelah menampilkan notifikasi
         header("location: ../../infinite_loop/php/index.php");
         exit();
     }
@@ -70,7 +70,6 @@ function input($data)
 }
 $bidang = '';
 
-// Cek apakah ada kiriman form dari method post
 // Cek apakah ada kiriman form dari method post
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nama = input($_POST["nama"]);

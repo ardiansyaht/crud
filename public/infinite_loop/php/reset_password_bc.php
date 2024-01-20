@@ -43,6 +43,7 @@ if (isset($_POST['reset_password'])) {
 
                     // Tampilkan pesan sukses
                     $success_message = "Password berhasil direset. Silakan login.";
+                    
                 } else {
                     $error_message = "Gagal menyiapkan pernyataan reset password.";
                 }
@@ -56,6 +57,7 @@ if (isset($_POST['reset_password'])) {
     } else {
         $error_message = "Gagal menyiapkan pernyataan pengecekan token.";
     }
+    mysqli_close($koneksi);
 }
 ?>
 

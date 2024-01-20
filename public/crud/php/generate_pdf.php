@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . ('/../../../bootstrap/sb-admin/tcpdf/tcpdf.php');
+require __DIR__ . ('/../../../bootstrap/tcpdf/tcpdf.php');
 include "koneksi.php"; // Pastikan file koneksi.php ada
 session_start();
 

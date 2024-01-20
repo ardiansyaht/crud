@@ -1,6 +1,6 @@
 <?php
 session_start();
-require __DIR__ . '/../../../bootstrap/sb-admin/vendor/autoload.php';
+require __DIR__ . '/../../../bootstrap/vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -21,11 +21,11 @@ if (isset($_POST['forgot_password'])) {
         $resetToken = bin2hex(random_bytes(32));
 
         // Simpan token dan waktu kedaluwarsa di database
-        $sqlUpdateToken = "UPDATE $tabel_pengguna SET reset_token = '$resetToken', reset_token_expires = DATE_ADD(NOW(), INTERVAL 1 MINUTES) WHERE email = '$email'";
+        $sqlUpdateToken = "UPDATE $tabel_pengguna SET reset_token = '$resetToken', reset_token_expires = DATE_ADD(NOW(), INTERVAL 1 MINUTE) WHERE email = '$email'";
         mysqli_query($koneksi, $sqlUpdateToken);
 
         // Kirim email reset password menggunakan PHPMailer
-        $resetLink = "http://localhost/web-1/project-2/public/infinite_loop/php/reset_password_bc.php?token=$resetToken&email=$email";
+        $resetLink = "http://localhost/web-1/public/infinite_loop/php/reset_password_bc.php?token=$resetToken&email=$email";
 
         $mail = new PHPMailer(true);
 

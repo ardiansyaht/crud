@@ -1,38 +1,40 @@
-<?php 
+<?php
 session_start();
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require __DIR__ . '/../../../bootstrap/sb-admin/vendor/autoload.php';
+require __DIR__ . '/../../../bootstrap/vendor/autoload.php';
 
+$emailSudahTerdaftar = false;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $name = htmlspecialchars($_POST['name']);
-  $email = htmlspecialchars($_POST['email']);
-  $message = htmlspecialchars($_POST['message']);
-  
+    $name = htmlspecialchars($_POST['name']);
+    $email = htmlspecialchars($_POST['email']);
+    $message = htmlspecialchars($_POST['message']);
 
-    $mail = new PHPMailer(true);
+        // Kirim email jika email belum terdaftar
+        $mail = new PHPMailer(true);
+        try {
+            // Pengaturan server SMTP Gmail
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'ardiansyah3151@gmail.com'; // Ganti dengan alamat email Gmail Anda
+            $mail->Password = 'riiknwzqbhudrhtm'; // Ganti dengan kata sandi Gmail Anda
+            $mail->SMTPSecure = 'ssl';
+            $mail->Port = 465;
 
-    try {
-        // Pengaturan server SMTP Gmail
-        $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = 'ardiansyah3151@gmail.com'; // Ganti dengan alamat email Gmail Anda
-        $mail->Password = 'riiknwzqbhudrhtm'; // Ganti dengan kata sandi Gmail Anda
-        $mail->SMTPSecure = 'ssl';
-        $mail->Port = 465;
-
-        // Pengaturan email
-        $mail->setFrom($email, $name);
-        $mail->addAddress('ardiansyah3151@gmail.com'); // Alamat email tujuan (dalam hal ini, email Anda sendiri)
-        $mail->Subject = 'New Contact Form Submission';
-        $mail->Body = "Name: $name\nEmail: $email\nMessage: $message";
-        // Kirim email
-        $mail->send();
-    } catch (Exception $e) {      
-    }
+            // Pengaturan email
+            $mail->setFrom($email, $name);
+            $mail->addAddress('ardiansyah3151@gmail.com'); // Alamat email tujuan (dalam hal ini, email Anda sendiri)
+            $mail->Subject = 'New Contact Form Submission';
+            $mail->Body = "Name: $name\nEmail: $email\nMessage: $message";
+            // Kirim email
+            $mail->send();
+        } catch (Exception $e) {
+            // Handle exception
+        }
+    
 } else {
 }
 
@@ -42,7 +44,18 @@ if (!isset($_SESSION['session_username'])) {
     exit();
 }
 $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
+function isEmailRegistered($email) {
+  // Gantilah bagian ini dengan logika sesuai struktur database Anda
+  // Misalnya, Anda bisa menggunakan PDO atau mysqli untuk berinteraksi dengan database
+  // Berikut hanya contoh sederhana
+  $pdo = new PDO("mysql:host=localhost;dbname=crud", "root", "");
+  $stmt = $pdo->prepare("SELECT COUNT(*) FROM peserta WHERE email = ?");
+  $stmt->execute([$email]);
+
+  return $stmt->fetchColumn() > 0;
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -280,32 +293,35 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
     </section>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-    function checkLogin(bidang) {
-        ' . (!isset($_SESSION['session_email']) && (!isset($_SESSION['session_role']) || $_SESSION['session_role'] !== 'admin') ? '
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "Silakan login terlebih dahulu."
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = "index.php"; // Ganti dengan path menuju halaman login
-                }
-            }); return false;' : '
-        // Lakukan pemeriksaan email terdaftar di tb_peserta di sini
-        var emailSudahTerdaftar = true; // Ganti dengan logika sesuai implementasi Anda
-        if (emailSudahTerdaftar) {
-            Swal.fire({
-                icon: "info",
-                title: "Email sudah terdaftar",
-                text: "Maaf, Anda sudah terdaftar bila ingin ada perubahan silahkan hubungi customer service."
-            });
-        } else {
-            window.location.href = "../../crud/php/create.php?bidang=" + bidang;
-        }
-        ') . '
-    }
+    function checkLogin() {
+      ' . (isset($_SESSION['session_email']) ? '
+            var userEmail = "' . $_SESSION['session_email'] . '";
+            var isEmailRegistered = ' . (isEmailRegistered($_SESSION['session_email']) ? 'true' : 'false') . ';
+            if (isEmailRegistered) {
+                Swal.fire({
+                    icon: "info",
+                    title: "Oops...",
+                    text: "Email sudah terdaftar. Bila ada perubahan silahkan hubungi Customer Service."
+                });
+                return false;
+            }
+        ' : '') . '
+      ' . (!isset($_SESSION['session_email']) && (!isset($_SESSION['session_role']) || $_SESSION['session_role'] !== 'admin') ? '
+          Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Silakan login terlebih dahulu."
+          }).then((result) => {
+              if (result.isConfirmed) {
+                  window.location.href = "index.php"; // Ganti dengan path menuju halaman login
+              }
+          }); return false;' : 'window.location.href = "../../crud/php/create.php";') . '
+  }
 </script>';
 ?>
+
+
+
     <!-- Contact -->
     <section id="contact" class="tm-section-pad-top tm-parallax-2">
     

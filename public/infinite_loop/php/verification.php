@@ -1,6 +1,6 @@
 <?php
 session_start();
-require __DIR__ . '/../../../bootstrap/sb-admin/vendor/autoload.php';
+require __DIR__ . '/../../../bootstrap/vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
