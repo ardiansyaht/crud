@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
     <title>TechForge Academy</title>
 </head>
+
 <body>
     <nav class="navbar navbar-dark bg-dark">
         <span class="navbar-brand mb-0 h1">TechForge Academy</span>
     </nav>
     <div class="container">
         <br>
-        <h4><center>DAFTAR PESERTA PELATIHAN</center></h4>
-        
+        <h4>
+            <center>DAFTAR PESERTA PELATIHAN</center>
+        </h4>
+
         <?php
-        
+
         include "koneksi.php";
         if (!isset($_SESSION['session_username'])) {
             header("location: login.php");
@@ -62,10 +66,10 @@
             <?php
             while ($data = mysqli_fetch_array($hasil)) {
                 $no++;
-                ?>
+            ?>
                 <tbody>
                     <tr>
-                        <td><?php echo $no;?></td>
+                        <td><?php echo $no; ?></td>
                         <td><?php echo $data["nama"]; ?></td>
                         <td><?php echo $data["sekolah"];   ?></td>
                         <td><?php echo $data["jurusan"];   ?></td>
@@ -75,11 +79,11 @@
                         <td><?php echo $data["bidang"];   ?></td>
                         <td>
                             <a href="update.php?id_peserta=<?php echo htmlspecialchars($data['id_peserta']); ?>" class="btn btn-warning" role="button">Update</a>
-                            <a href="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>?id_peserta=<?php echo $data['id_peserta']; ?>" class="btn btn-danger" role="button">Delete</a>
+                            <a href="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>?id_peserta=<?php echo $data['id_peserta']; ?>" class="btn btn-danger" role="button">Delete</a>
                         </td>
                     </tr>
                 </tbody>
-                <?php
+            <?php
             }
             ?>
         </table>
@@ -87,4 +91,5 @@
         <a href="generate_pdf.php" class="btn btn-success" role="button">Download PDF</a>
     </div>
 </body>
+
 </html>

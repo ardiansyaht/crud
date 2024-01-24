@@ -11,11 +11,33 @@ $err          = "";
 $newUsername  = "";
 $newPassword  = "";
 $confirmPassword = "";
+function verifyRecaptcha($recaptchaResponse)
+{
+    $secretKey = "6LceCFspAAAAAOiZ7XgAOMgIboFKgD0vsXwQb7Dn";
+    $url = "https://www.google.com/recaptcha/api/siteverify?secret=" . $secretKey . "&response=" . $recaptchaResponse;
+
+    $response = file_get_contents($url);
+    $responseData = json_decode($response);
+    return $responseData->success;
+}
+
 
 if (isset($_POST['register'])) {
     $newUsername       = $_POST['new_username'];
     $newPassword       = $_POST['new_password'];
     $confirmPassword   = $_POST['confirm_password'];
+    if (isset($_POST['register'])) {
+        // ... kode validasi yang ada ...
+
+        $recaptchaResponse = $_POST['g-recaptcha-response'];
+        if (verifyRecaptcha($recaptchaResponse)) {
+            // reCAPTCHA berhasil, lanjutkan dengan pendaftaran
+            // ... logika pendaftaran yang ada ...
+        } else {
+            $err .= "<li>Verifikasi reCAPTCHA gagal. Silakan coba lagi.</li>";
+        }
+    }
+
 
     // Validasi form di sisi klien
     if (empty($newUsername) || empty($newPassword) || empty($confirmPassword)) {
@@ -57,28 +79,32 @@ if (isset($_POST['register'])) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <!-- Tambahan CSS atau link ke file eksternal jika diperlukan -->
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <link rel="icon" type="image/png" href="../loginv1/images/icons/favicon.ico"/>
-	<link rel="stylesheet" type="text/css" href="../loginv1/vendor/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="../loginv1/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="../loginv1/fonts/iconic/css/material-design-iconic-font.min.css">
-	<link rel="stylesheet" type="text/css" href="../loginv1/vendor/animate/animate.css">
-	<link rel="stylesheet" type="text/css" href="../loginv1/vendor/css-hamburgers/hamburgers.min.css">
-	<link rel="stylesheet" type="text/css" href="../loginv1/vendor/animsition/css/animsition.min.css">
-	<link rel="stylesheet" type="text/css" href="../loginv1/vendor/select2/select2.min.css">
-	<link rel="stylesheet" type="text/css" href="../loginv1/vendor/daterangepicker/daterangepicker.css">
-	<link rel="stylesheet" type="text/css" href="../loginv1/css/util.css">
-	<link rel="stylesheet" type="text/css" href="../loginv1/css/main.css">
+    <link rel="icon" type="image/png" href="../loginv1/images/icons/favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="../loginv1/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../loginv1/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="../loginv1/fonts/iconic/css/material-design-iconic-font.min.css">
+    <link rel="stylesheet" type="text/css" href="../loginv1/vendor/animate/animate.css">
+    <link rel="stylesheet" type="text/css" href="../loginv1/vendor/css-hamburgers/hamburgers.min.css">
+    <link rel="stylesheet" type="text/css" href="../loginv1/vendor/animsition/css/animsition.min.css">
+    <link rel="stylesheet" type="text/css" href="../loginv1/vendor/select2/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="../loginv1/vendor/daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" type="text/css" href="../loginv1/css/util.css">
+    <link rel="stylesheet" type="text/css" href="../loginv1/css/main.css">
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+
     <style>
-     
-        
+
+
     </style>
     <script>
         function validateForm() {
             var newPassword = document.getElementById("new-password").value;
             var confirmPassword = document.getElementById("confirm-password").value;
+            var recaptchaResponse = grecaptcha.getResponse();
             if (newPassword.length < 5) {
                 alert("Kata sandi harus terdiri dari minimal 5 karakter.");
                 return false;
@@ -87,16 +113,21 @@ if (isset($_POST['register'])) {
                 alert("Konfirmasi kata sandi tidak cocok.");
                 return false;
             }
+            if (recaptchaResponse.length === 0) {
+                alert("Harap selesaikan reCAPTCHA.");
+                return false;
+            }
             return true;
         }
     </script>
 </head>
+
 <body>
     <!-- Formulir Register -->
     <div class="limiter">
         <div class="container-login100" style="background-image: url('login/images/bg-01.jpg');">
             <div class="wrap-login100">
-                <form id="registerform" class="login100-form validate-form" action="" method="post" onsubmit="return validateRegisterForm()">
+                <form id="registerform" class="login100-form validate-form" action="" method="post" onsubmit="return validateForm()">
                     <span class="login100-form-logo">
                         <i class="zmdi zmdi-landscape"></i>
                     </span>
@@ -113,51 +144,52 @@ if (isset($_POST['register'])) {
                     <div class="wrap-input100 validate-input" data-validate="Enter password">
                         <input class="input100" type="password" id="new-password" name="new_password" placeholder="Password">
                         <span class="focus-input100" data-placeholder="&#xf191;"></span>
-                        
+
                         </span>
                     </div>
 
                     <div class="wrap-input100 validate-input" data-validate="Confirm password">
                         <input class="input100" type="password" id="confirm-password" name="confirm_password" placeholder="Confirm Password">
                         <span class="focus-input100" data-placeholder="&#xf191;"></span>
-                        
                         </span>
                     </div>
-
+                    <!-- Recaptcha div -->
+                    <div class="g-recaptcha" data-sitekey="6LceCFspAAAAAE2ZLBwHhGBXA1lxMVOyMP_qG2BQ"></div>
                     <div class="container-login100-form-btn">
-                    <button class="login100-form-btn" type="submit" name="register">
-                        Register
-                    </button>
-                </div>
-                <div class="text-center p-t-10">
-    <?php
-    if (!empty($err)) {
-        echo '<div class="alert alert-danger">' . $err . '</div>';
-    }
-    ?>
-    <?php
-    if (!empty($confirmPasswordError)) {
-        echo '<div class="alert alert-danger">' . $confirmPasswordError . '</div>';
-    }
-    ?>
-</div>
-                <div class="text-center p-t-30">
-                    <a class="txt1" href="login.php">
-                    Already have an account?
+                        <button class="login100-form-btn" type="submit" name="register">
+                            Register
+                        </button>
+                    </div>
+                    <div class="text-center p-t-10">
+                        <?php
+                        if (!empty($err)) {
+                            echo '<div class="alert alert-danger">' . $err . '</div>';
+                        }
+                        ?>
+                        <?php
+                        if (!empty($confirmPasswordError)) {
+                            echo '<div class="alert alert-danger">' . $confirmPasswordError . '</div>';
+                        }
+                        ?>
+                    </div>
+                    <div class="text-center p-t-30">
+                        <a class="txt1" href="login.php">
+                            Already have an account?
                     </div>
                 </form>
             </div>
         </div>
     </div>
     <!-- <script src="login/vendor/jquery/jquery-3.2.1.min.js"></script> -->
-	<script src="../loginv1/vendor/animsition/js/animsition.min.js"></script>
-	<script src="../loginv1/vendor/bootstrap/js/popper.js"></script>
-	<script src="../loginv1/vendor/bootstrap/js/bootstrap.min.js"></script>
-	<script src="../loginv1/vendor/select2/select2.min.js"></script>
-	<script src="../loginv1/vendor/daterangepicker/moment.min.js"></script>
-	<script src="../loginv1/vendor/daterangepicker/daterangepicker.js"></script>
-	<script src="../loginv1/vendor/countdowntime/countdowntime.js"></script>
-	<script src="../loginv1/js/main.js"></script>
+    <script src="../loginv1/vendor/animsition/js/animsition.min.js"></script>
+    <script src="../loginv1/vendor/bootstrap/js/popper.js"></script>
+    <script src="../loginv1/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../loginv1/vendor/select2/select2.min.js"></script>
+    <script src="../loginv1/vendor/daterangepicker/moment.min.js"></script>
+    <script src="../loginv1/vendor/daterangepicker/daterangepicker.js"></script>
+    <script src="../loginv1/vendor/countdowntime/countdowntime.js"></script>
+    <script src="../loginv1/js/main.js"></script>
 
 </body>
+
 </html>

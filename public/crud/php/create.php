@@ -37,7 +37,7 @@ if ($_SESSION['session_role'] !== 'admin') {
     if (!$user || $user['status'] !== 'verified') {
         // Email tidak ditemukan di database atau status tidak terverifikasi
         // Lakukan sesuatu (redirect atau lainnya)
-        header("location: ../../infinite_loop/php/index.php");
+        header("location: ../../infinite_loop/php/homepage.php");
         exit();
     }
 
@@ -52,10 +52,10 @@ if ($_SESSION['session_role'] !== 'admin') {
     if (mysqli_num_rows($result_cek_peserta) > 0) {
         // Email sudah terdaftar di tb_peserta, beri respons atau tindakan yang sesuai
         $notification = "Anda sudah mengisi formulir pendaftaran.";
-        
+
         // Replace the following line with the SweetAlert code
         echo json_encode(array('success' => false, 'error' => $notification));
-        header("location: ../../infinite_loop/php/index.php");
+        header("location: ../../infinite_loop/php/homepage.php");
         exit();
     }
 }
@@ -107,6 +107,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -116,6 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
 <body>
     <div class="container">
         <h2>Formulir Pendaftaran Peserta</h2>
@@ -127,15 +129,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <div class="input-box">
                     <span class="details">Sekolah:</span>
-                    <input type="text" name="sekolah" class="form-control" placeholder="Masukkan Nama Sekolah" required/>
+                    <input type="text" name="sekolah" class="form-control" placeholder="Masukkan Nama Sekolah" required />
                 </div>
                 <div class="input-box">
                     <span class="details">Jurusan:</span>
-                    <input type="text" name="jurusan" class="form-control" placeholder="Masukkan Jurusan" required/>
+                    <input type="text" name="jurusan" class="form-control" placeholder="Masukkan Jurusan" required />
                 </div>
                 <div class="input-box">
                     <span class="details">No HP:</span>
-                    <input type="number" name="no_hp" class="form-control" placeholder="Masukkan No HP" required/>
+                    <input type="number" name="no_hp" class="form-control" placeholder="Masukkan No HP" required />
                 </div>
                 <div class="input-box">
                     <span class="details">Alamat:</span>
@@ -143,102 +145,94 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             </div>
             <div class="category">
-    <span class="details">Bidang Pilihan:</span>
-    <select name="bidang" class="form-control" required>
-    <option value="" selected disabled hidden>Pilih Bidang</option>
-        <option value="web-development" <?php echo ($bidang === 'web-development') ? 'selected' : ''; ?>>Web Development</option>
-        <option value="data-science" <?php echo ($bidang === 'data-science') ? 'selected' : ''; ?>>Data Science</option>
-        <option value="full-stack-development" <?php echo ($bidang === 'full-stack-development') ? 'selected' : ''; ?>>Full Stack Development</option>
-        <option value="mobile-app-development" <?php echo ($bidang === 'mobile-app-development') ? 'selected' : ''; ?>>Mobile App Development</option>
-        <option value="cyber-security" <?php echo ($bidang === 'cyber-security') ? 'selected' : ''; ?>>Cyber Security</option>
-        <option value="devops" <?php echo ($bidang === 'devops') ? 'selected' : ''; ?>>DevOps</option>
-        <option value="ui-ux-design" <?php echo ($bidang === 'ui-ux-design') ? 'selected' : ''; ?>>UI/UX Design</option>
-        <option value="game-development" <?php echo ($bidang === 'game-development') ? 'selected' : ''; ?>>Game Development</option>
-    </select>
-</div>
- 
-<div class="button">
-          <input type="submit" value="Register">
-        </div>
-    <script>
-   document.getElementById("myForm").addEventListener("submit", function (event) {
-    event.preventDefault(); // Mencegah submit langsung
+                <span class="details">Bidang Pilihan:</span>
+                <select name="bidang" class="form-control" required>
+                    <option value="" selected disabled hidden>Pilih Bidang</option>
+                    <option value="web-development" <?php echo ($bidang === 'web-development') ? 'selected' : ''; ?>>Web Development</option>
+                    <option value="data-science" <?php echo ($bidang === 'data-science') ? 'selected' : ''; ?>>Data Science</option>
+                    <option value="full-stack-development" <?php echo ($bidang === 'full-stack-development') ? 'selected' : ''; ?>>Full Stack Development</option>
+                    <option value="mobile-app-development" <?php echo ($bidang === 'mobile-app-development') ? 'selected' : ''; ?>>Mobile App Development</option>
+                    <option value="cyber-security" <?php echo ($bidang === 'cyber-security') ? 'selected' : ''; ?>>Cyber Security</option>
+                    <option value="devops" <?php echo ($bidang === 'devops') ? 'selected' : ''; ?>>DevOps</option>
+                    <option value="ui-ux-design" <?php echo ($bidang === 'ui-ux-design') ? 'selected' : ''; ?>>UI/UX Design</option>
+                    <option value="game-development" <?php echo ($bidang === 'game-development') ? 'selected' : ''; ?>>Game Development</option>
+                </select>
+            </div>
 
-    // Menampilkan konfirmasi menggunakan SweetAlert2
-    Swal.fire({
-        title: 'Apakah Anda yakin telah mengisi dengan benar?',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Jika user memilih "Yes", lanjutkan dengan mengirim formulir
-            submitForm();
-        } else {
-            // Jika user memilih "No", tidak melakukan apa-apa
-        }
-    });
-});
+            <div class="button">
+                <input type="submit" value="Register">
+            </div>
+            <script>
+                document.getElementById("myForm").addEventListener("submit", function(event) {
+                    event.preventDefault(); // Mencegah submit langsung
 
-function submitForm() {
-    // Menggunakan Fetch API untuk mengirim data form ke server
-    fetch("create.php", {
-        method: "POST",
-        body: new FormData(document.getElementById("myForm")),
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Handle response dari server (response.json() mengembalikan Promise)
-        if (data.success) {
-            // Menampilkan notifikasi sukses menggunakan SweetAlert2
-            Swal.fire({
-                title: 'Pendaftaran Berhasil',
-                icon: 'success',
-                text: 'Terima kasih, pendaftaran Anda berhasil.',
-                showConfirmButton: false,
-                timer: 2000
-            }).then(() => {
-                // Lakukan tindakan lain jika perlu, seperti membersihkan formulir
-                document.getElementById("myForm").reset();
-            });
-        } else {
-            // Menampilkan notifikasi gagal menggunakan SweetAlert2
-            if (data.error.includes('Anda sudah mengisi formulir pendaftaran')) {
-                Swal.fire({
-                    title: 'Error',
-                    icon: 'error',
-                    text: 'Anda sudah mengisi formulir pendaftaran.',
+                    // Menampilkan konfirmasi menggunakan SweetAlert2
+                    Swal.fire({
+                        title: 'Apakah Anda yakin telah mengisi dengan benar?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Jika user memilih "Yes", lanjutkan dengan mengirim formulir
+                            submitForm();
+                        } else {
+                            // Jika user memilih "No", tidak melakukan apa-apa
+                        }
+                    });
                 });
-            } else if (data.error.includes('Email sudah terdaftar di tb_peserta')) {
-                Swal.fire({
-                    title: 'Error',
-                    icon: 'error',
-                    text: 'Email sudah terdaftar sebagai peserta.',
-                });
-            } else {
-                Swal.fire({
-                    title: 'Error',
-                    icon: 'error',
-                    text: 'Pendaftaran gagal. Silakan coba lagi.',
-                });
-            }
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
 
-</script>
-
-</div>
+                function submitForm() {
+                    // Menggunakan Fetch API untuk mengirim data form ke server
+                    fetch("create.php", {
+                            method: "POST",
+                            body: new FormData(document.getElementById("myForm")),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Handle response dari server (response.json() mengembalikan Promise)
+                            if (data.success) {
+                                // Menampilkan notifikasi sukses menggunakan SweetAlert2
+                                Swal.fire({
+                                    title: 'Pendaftaran Berhasil',
+                                    icon: 'success',
+                                    text: 'Terima kasih, pendaftaran Anda berhasil.',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                }).then(() => {
+                                    // Lakukan tindakan lain jika perlu, seperti membersihkan formulir
+                                    document.getElementById("myForm").reset();
+                                });
+                            } else {
+                                // Menampilkan notifikasi gagal menggunakan SweetAlert2
+                                if (data.error.includes('Anda sudah mengisi formulir pendaftaran')) {
+                                    Swal.fire({
+                                        title: 'Error',
+                                        icon: 'error',
+                                        text: 'Anda sudah mengisi formulir pendaftaran.',
+                                    });
+                                } else if (data.error.includes('Email sudah terdaftar di tb_peserta')) {
+                                    Swal.fire({
+                                        title: 'Error',
+                                        icon: 'error',
+                                        text: 'Email sudah terdaftar sebagai peserta.',
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: 'Error',
+                                        icon: 'error',
+                                        text: 'Pendaftaran gagal. Silakan coba lagi.',
+                                    });
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                }
+            </script>
+    </div>
 </body>
+
 </html>
-
-
-
-
-
-
-

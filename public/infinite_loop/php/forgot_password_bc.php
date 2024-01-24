@@ -65,6 +65,7 @@ if (isset($_POST['forgot_password'])) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Forgot Password</title>
@@ -72,40 +73,42 @@ if (isset($_POST['forgot_password'])) {
     <link rel="stylesheet" href="../login-register/css/style.css">
     <!-- Tambahkan CSS sesuai kebutuhan -->
 </head>
+
 <body>
-<div class="wrapper">
-    <div class="inner">
-        <img src="../login-register/images/image-1.png" alt="" class="image-1">
-        <a href="index.php" class="back-link" style="color: #808080;"><span class="lnr lnr-arrow-left"></span> Back to Home</a>
-        <form action="" method="post">
-            <h3>Forgot Password</h3>
+    <div class="wrapper">
+        <div class="inner">
+            <img src="../login-register/images/image-1.png" alt="" class="image-1">
+            <a href="homepage.php" class="back-link" style="color: #808080;"><span class="lnr lnr-arrow-left"></span> Back to Home</a>
+            <form action="" method="post">
+                <h3>Forgot Password</h3>
 
-            <?php if (isset($error_message)) { ?>
-                <div class="alert alert-danger" role="alert">
-                    <?php echo $error_message; ?>
+                <?php if (isset($error_message)) { ?>
+                    <div class="alert alert-danger" role="alert">
+                        <?php echo $error_message; ?>
+                    </div>
+                <?php } elseif (isset($success_message)) { ?>
+                    <div class="alert alert-success" role="alert">
+                        <?php echo $success_message; ?>
+                    </div>
+                <?php } ?>
+
+                <div class="form-holder">
+                    <span class="lnr lnr-envelope"></span>
+                    <input type="text" class="form-control" name="email" placeholder="Email">
                 </div>
-            <?php } elseif (isset($success_message)) { ?>
-                <div class="alert alert-success" role="alert">
-                    <?php echo $success_message; ?>
-                </div>
-            <?php } ?>
-             
-            <div class="form-holder">
-                <span class="lnr lnr-envelope"></span>
-                <input type="text" class="form-control" name="email" placeholder="Email">
-            </div>
-            <button type="submit" name="forgot_password">
-                <span>Reset Password</span>
-            </button>
-            <p><a href="login_bc.php"><span class="lnr lnr-arrow-left"></span> Back to Login</a></p>
-        </form>
-        <img src="../login-register/images/image-2.png" alt="" class="image-2">
+                <button type="submit" name="forgot_password">
+                    <span>Reset Password</span>
+                </button>
+                <p><a href="login_bc.php"><span class="lnr lnr-arrow-left"></span> Back to Login</a></p>
+            </form>
+            <img src="../login-register/images/image-2.png" alt="" class="image-2">
+        </div>
     </div>
-</div>
 
-<script src="../login-register/js/jquery-3.3.1.min.js"></script>
-<script src="../login-register/js/main.js"></script>
-<!-- Tambahkan script JS sesuai kebutuhan -->
+    <script src="../login-register/js/jquery-3.3.1.min.js"></script>
+    <script src="../login-register/js/main.js"></script>
+    <!-- Tambahkan script JS sesuai kebutuhan -->
 
 </body>
+
 </html>

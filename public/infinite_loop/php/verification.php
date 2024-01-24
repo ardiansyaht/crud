@@ -106,6 +106,7 @@ if (isset($_POST['verify'])) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -113,7 +114,8 @@ if (isset($_POST['verify'])) {
     <link rel="stylesheet" href="../login-register/css/style.css">
     <style>
         /* Tambahkan gaya untuk pesan kesalahan dan sukses */
-        .error-message, .success-message {
+        .error-message,
+        .success-message {
             color: #FF0000;
             font-size: 14px;
             border: 1px solid #FF0000;
@@ -134,89 +136,88 @@ if (isset($_POST['verify'])) {
     </style>
     <title>Bootcamp</title>
 </head>
+
 <body>
 
-<div class="wrapper">
-    <div class="inner">
-        <img src="../login-register/images/image-1.png" alt="" class="image-1">
+    <div class="wrapper">
+        <div class="inner">
+            <img src="../login-register/images/image-1.png" alt="" class="image-1">
 
-        <form action="" method="post" id="verificationForm">
-            <h3>Verification Code</h3>
-            <!-- Menambahkan input field untuk email -->
-            <div class="form-holder">
-                <span class="lnr lnr-envelope"></span>
-                <input type="text" class="form-control" name="email" placeholder="Email" required>
-            </div>
-            <div class="form-holder">
-                <span class="lnr lnr-lock"></span>
-                <input type="number" class="form-control" name="otp_code" placeholder="Verification Code" required>
-            </div>
-            
-            <!-- Tampilkan pesan kesalahan di sekitar kotak input -->
-            <?php if (!empty($error_message)) : ?>
-                <div class="error-message"><?php echo $error_message; ?></div>
-            <?php endif; ?>
-
-            <!-- Tampilkan pesan sukses jika ada -->
-            <?php if (!empty($success_message)) : ?>
-                <div class="success-message"><?php echo $success_message; ?></div>
-            <?php endif; ?>
-
-            <button type="submit" name="verify">
-                <span>Verify</span>
-            </button>
-            
-            <!-- Footer Section -->
-            <div class="footer">
-                <div class="left-footer">
-                    <p style="color: #808080;">
-                        <a href="#" id="resendLink" class="sign-up-link" style="color: #808080;">Resend Code</a>
-                    </p>
+            <form action="" method="post" id="verificationForm">
+                <h3>Verification Code</h3>
+                <!-- Menambahkan input field untuk email -->
+                <div class="form-holder">
+                    <span class="lnr lnr-envelope"></span>
+                    <input type="text" class="form-control" name="email" placeholder="Email" required>
                 </div>
-            </div>
-        </form>
+                <div class="form-holder">
+                    <span class="lnr lnr-lock"></span>
+                    <input type="number" class="form-control" name="otp_code" placeholder="Verification Code" required>
+                </div>
 
-        <!-- Form untuk pengiriman ulang kode -->
-        <form action="" method="post" id="resendForm">
-            <h3>Resend Verification Code</h3>
-            <div class="form-holder">
-                <span class="lnr lnr-envelope"></span>
-                <input type="text" class="form-control" name="email_resend" placeholder="Email" required>
-            </div>
-            
-            <!-- Tampilkan pesan kesalahan di sekitar kotak input -->
-            <?php if (!empty($error_message)) : ?>
-                <div class="error-message"><?php echo $error_message; ?></div>
-            <?php endif; ?>
+                <!-- Tampilkan pesan kesalahan di sekitar kotak input -->
+                <?php if (!empty($error_message)) : ?>
+                    <div class="error-message"><?php echo $error_message; ?></div>
+                <?php endif; ?>
 
-            <!-- Tampilkan pesan sukses jika ada -->
-            <?php if (!empty($success_message)) : ?>
-                <div class="success-message"><?php echo $success_message; ?></div>
-            <?php endif; ?>
+                <!-- Tampilkan pesan sukses jika ada -->
+                <?php if (!empty($success_message)) : ?>
+                    <div class="success-message"><?php echo $success_message; ?></div>
+                <?php endif; ?>
 
-            <button type="submit" name="resend_code">
-                <span>Resend Code</span>
-            </button>
-        </form>
+                <button type="submit" name="verify">
+                    <span>Verify</span>
+                </button>
 
-        <img src="../login-register/images/image-2.png" alt="" class="image-2">
+                <!-- Footer Section -->
+                <div class="footer">
+                    <div class="left-footer">
+                        <p style="color: #808080;">
+                            <a href="#" id="resendLink" class="sign-up-link" style="color: #808080;">Resend Code</a>
+                        </p>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Form untuk pengiriman ulang kode -->
+            <form action="" method="post" id="resendForm">
+                <h3>Resend Verification Code</h3>
+                <div class="form-holder">
+                    <span class="lnr lnr-envelope"></span>
+                    <input type="text" class="form-control" name="email_resend" placeholder="Email" required>
+                </div>
+
+                <!-- Tampilkan pesan kesalahan di sekitar kotak input -->
+                <?php if (!empty($error_message)) : ?>
+                    <div class="error-message"><?php echo $error_message; ?></div>
+                <?php endif; ?>
+
+                <!-- Tampilkan pesan sukses jika ada -->
+                <?php if (!empty($success_message)) : ?>
+                    <div class="success-message"><?php echo $success_message; ?></div>
+                <?php endif; ?>
+
+                <button type="submit" name="resend_code">
+                    <span>Resend Code</span>
+                </button>
+            </form>
+
+            <img src="../login-register/images/image-2.png" alt="" class="image-2">
+        </div>
     </div>
-</div>
 
-<script src="../login-register/js/jquery-3.3.1.min.js"></script>
-<script src="../login-register/js/main.js"></script>
+    <script src="../login-register/js/jquery-3.3.1.min.js"></script>
+    <script src="../login-register/js/main.js"></script>
 
-<script>
-    document.getElementById('resendLink').addEventListener('click', function() {
-        // Sembunyikan formulir verifikasi kode
-        document.getElementById('verificationForm').style.display = 'none';
-        
-        // Tampilkan formulir pengiriman ulang kode
-        document.getElementById('resendForm').style.display = 'block';
-    });
-</script>
+    <script>
+        document.getElementById('resendLink').addEventListener('click', function() {
+            // Sembunyikan formulir verifikasi kode
+            document.getElementById('verificationForm').style.display = 'none';
+
+            // Tampilkan formulir pengiriman ulang kode
+            document.getElementById('resendForm').style.display = 'block';
+        });
+    </script>
 </body>
+
 </html>
-
-
-

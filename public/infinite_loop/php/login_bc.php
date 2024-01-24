@@ -11,7 +11,8 @@ $err            = "";
 $email          = "";
 
 // Fungsi untuk menghitung percobaan login yang gagal
-function getFailedLoginAttempts($email, $koneksi) {
+function getFailedLoginAttempts($email, $koneksi)
+{
     $sql = "SELECT failed_login_attempts FROM tb_login_bc WHERE email = '$email'";
     $result = mysqli_query($koneksi, $sql);
     $row = mysqli_fetch_assoc($result);
@@ -19,13 +20,15 @@ function getFailedLoginAttempts($email, $koneksi) {
 }
 
 // Fungsi untuk mengupdate percobaan login yang gagal
-function updateFailedLoginAttempts($email, $koneksi, $attempts) {
+function updateFailedLoginAttempts($email, $koneksi, $attempts)
+{
     $sql = "UPDATE tb_login_bc SET failed_login_attempts = $attempts WHERE email = '$email'";
     mysqli_query($koneksi, $sql);
 }
 
 // Fungsi untuk menghapus akun yang belum diverifikasi dalam waktu 2 menit
-function deleteUnverifiedAccounts($koneksi) {
+function deleteUnverifiedAccounts($koneksi)
+{
     $sqlDeleteUnverified = "DELETE FROM tb_login_bc WHERE status = 'notverified' AND registration_time < NOW() - INTERVAL 1 HOUR";
     mysqli_query($koneksi, $sqlDeleteUnverified);
 }
@@ -77,7 +80,7 @@ if (isset($_POST['login'])) {
         // Cek status verifikasi
         if ($r1['status'] != 'verified') {
             // Akun belum diverifikasi
-            $_SESSION['email_for_verification'] = $email; 
+            $_SESSION['email_for_verification'] = $email;
             $err .= "<li>Akun Anda belum diverifikasi. Silakan <a href='verification.php'>verifikasi</a> terlebih dahulu.</li>";
         } else {
             // Reset percobaan login yang gagal
@@ -86,7 +89,7 @@ if (isset($_POST['login'])) {
             $_SESSION['session_email'] = $email;
             $_SESSION['session_role'] = $r1['role'];
 
-            header("location:index.php");
+            header("location:homepage.php");
             exit();
         }
     }
@@ -100,8 +103,9 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
 
 <!DOCTYPE html>
 <html>
+
 <head>
-<script>
+    <script>
         function togglePassword() {
             var passwordField = document.getElementById("password");
             var toggleIcon = document.getElementById("toggleIcon");
@@ -121,62 +125,62 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
     <link rel="stylesheet" href="../login-register/fonts/linearicons/style.css">
     <link rel="stylesheet" href="../login-register/css/style.css">
     <style>
-        
+
     </style>
 </head>
 
 <body>
 
-<div class="wrapper">
-    <div class="inner">
-    
-        <img src="../login-register/images/image-1.png" alt="" class="image-1">
-        <a href="index.php" class="back-link" style="color: #808080;"><span class="lnr lnr-arrow-left"></span> Back to Home</a>
-        <form action="" method="post">
-    <h3>LOGIN</h3>
+    <div class="wrapper">
+        <div class="inner">
 
-    <?php if (!empty($err)) { ?>
-        <div class="alert alert-danger" role="alert">
-            <ul>
-                <?php echo $err; ?>
-            </ul>
+            <img src="../login-register/images/image-1.png" alt="" class="image-1">
+            <a href="homepage.php" class="back-link" style="color: #808080;"><span class="lnr lnr-arrow-left"></span> Back to Home</a>
+            <form action="" method="post">
+                <h3>LOGIN</h3>
+
+                <?php if (!empty($err)) { ?>
+                    <div class="alert alert-danger" role="alert">
+                        <ul>
+                            <?php echo $err; ?>
+                        </ul>
+                    </div>
+                <?php } ?>
+
+                <div class="form-holder">
+                    <span class="lnr lnr-envelope"></span>
+                    <input type="text" class="form-control" name="email" placeholder="Mail">
+                </div>
+                <div class="form-holder">
+                    <span class="lnr lnr-lock"></span>
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Password">
+                    <span class="toggle-icon" onclick="togglePassword()" id="toggleIcon"></span>
+                </div>
+                <button type="submit" name="login">
+                    <span>Login</span>
+                </button>
+
+                <!-- Footer Section -->
+                <div class="footer">
+                    <div class="left-footer">
+                        <p style="color: #808080;">
+                            Don't have an account? <a href="register_bc.php" class="sign-up-link" style="color: #808080;">Sign Up</a>
+                        </p>
+                    </div>
+                    <div class="right-footer">
+                        <p style="color: #808080;">
+                            <a href="forgot_password_bc.php" class="forgot-password-link" style="color: #808080;">Forgot password?</a>
+                        </p>
+                    </div>
+                </div>
+                <!-- End Footer Section -->
+            </form>
+            <img src="../login-register/images/image-2.png" alt="" class="image-2">
         </div>
-    <?php } ?>
-     
-    <div class="form-holder">
-        <span class="lnr lnr-envelope"></span>
-        <input type="text" class="form-control" name="email" placeholder="Mail">
     </div>
-    <div class="form-holder">
-        <span class="lnr lnr-lock"></span>
-        <input type="password" class="form-control" name="password" id="password" placeholder="Password">
-        <span class="toggle-icon" onclick="togglePassword()" id="toggleIcon"></span>
-    </div>
-    <button type="submit" name="login">
-        <span>Login</span>
-    </button>   
 
-           <!-- Footer Section -->
-<div class="footer">
-    <div class="left-footer">
-        <p style="color: #808080;">
-            Don't have an account? <a href="register_bc.php" class="sign-up-link" style="color: #808080;">Sign Up</a>
-        </p>
-    </div>
-    <div class="right-footer">
-        <p style="color: #808080;">
-             <a href="forgot_password_bc.php" class="forgot-password-link" style="color: #808080;">Forgot password?</a>
-        </p>
-    </div>
-</div>
-
-            <!-- End Footer Section -->
-        </form>
-        <img src="../login-register/images/image-2.png" alt="" class="image-2">
-    </div>
-</div>
-
-<script src="../login-register/js/jquery-3.3.1.min.js"></script>
-<script src="../login-register/js/main.js"></script>
+    <script src="../login-register/js/jquery-3.3.1.min.js"></script>
+    <script src="../login-register/js/main.js"></script>
 </body>
+
 </html>

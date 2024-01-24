@@ -43,7 +43,6 @@ if (isset($_POST['reset_password'])) {
 
                     // Tampilkan pesan sukses
                     $success_message = "Password berhasil direset. Silakan login.";
-                    
                 } else {
                     $error_message = "Gagal menyiapkan pernyataan reset password.";
                 }
@@ -64,6 +63,7 @@ if (isset($_POST['reset_password'])) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Reset Password</title>
@@ -71,55 +71,56 @@ if (isset($_POST['reset_password'])) {
     <link rel="stylesheet" href="../login-register/css/style.css">
     <!-- Tambahkan CSS sesuai kebutuhan -->
 </head>
+
 <body>
 
-<div class="wrapper">
-    <div class="inner">
-        <img src="../login-register/images/image-1.png" alt="" class="image-1">
-        <a href="index.php" class="back-link" style="color: #808080;"><span class="lnr lnr-arrow-left"></span> Back to Home</a>
-        <form action="" method="post">
-            <h3>Reset Password</h3>
+    <div class="wrapper">
+        <div class="inner">
+            <img src="../login-register/images/image-1.png" alt="" class="image-1">
+            <a href="homepage.php" class="back-link" style="color: #808080;"><span class="lnr lnr-arrow-left"></span> Back to Home</a>
+            <form action="" method="post">
+                <h3>Reset Password</h3>
 
-            <?php if (isset($error_message)) { ?>
-                <div class="alert alert-danger" role="alert">
-                    <?php echo $error_message; ?>
+                <?php if (isset($error_message)) { ?>
+                    <div class="alert alert-danger" role="alert">
+                        <?php echo $error_message; ?>
+                    </div>
+                <?php } elseif (isset($success_message)) { ?>
+                    <div class="alert alert-success" role="alert">
+                        <?php echo $success_message; ?>
+                    </div>
+                <?php } ?>
+
+                <div class="form-holder">
+                    <span class="lnr lnr-lock"></span>
+                    <input type="password" class="form-control" name="password" placeholder="Password">
                 </div>
-            <?php } elseif (isset($success_message)) { ?>
-                <div class="alert alert-success" role="alert">
-                    <?php echo $success_message; ?>
+                <div class="form-holder">
+                    <span class="lnr lnr-lock"></span>
+                    <input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password">
                 </div>
-            <?php } ?>
-             
-            <div class="form-holder">
-                <span class="lnr lnr-lock"></span>
-                <input type="password" class="form-control" name="password" placeholder="Password">
-            </div>
-            <div class="form-holder">
-                <span class="lnr lnr-lock"></span>
-                <input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password">
-            </div>
-            <button type="submit" name="reset_password">
-                <span>Reset Password</span>
-            </button>
-           
-        </form>
-        <img src="../login-register/images/image-2.png" alt="" class="image-2">
+                <button type="submit" name="reset_password">
+                    <span>Reset Password</span>
+                </button>
+
+            </form>
+            <img src="../login-register/images/image-2.png" alt="" class="image-2">
+        </div>
     </div>
-</div>
 
-<script src="../login-register/js/jquery-3.3.1.min.js"></script>
-<script src="../login-register/js/main.js"></script>
+    <script src="../login-register/js/jquery-3.3.1.min.js"></script>
+    <script src="../login-register/js/main.js"></script>
 
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        <?php if (isset($success_message)) { ?>
-            setTimeout(function() {
-                window.close(); 
-            }, 3000); 
-        <?php } ?>
-    });
-</script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            <?php if (isset($success_message)) { ?>
+                setTimeout(function() {
+                    window.close();
+                }, 3000);
+            <?php } ?>
+        });
+    </script>
 </body>
-</html>
 
+</html>

@@ -21,7 +21,8 @@ $newPassword      = "";
 $confirmPassword  = "";
 
 
-function deleteUnverifiedAccounts($koneksi) {
+function deleteUnverifiedAccounts($koneksi)
+{
     $current_time = date('Y-m-d H:i:s');
     $two_minutes_ago = date('Y-m-d H:i:s', strtotime('-1 hour'));
     $sql = "DELETE FROM tb_login_bc WHERE status = 'notverified' AND registration_time < '$two_minutes_ago'";
@@ -43,77 +44,89 @@ if (isset($_POST['register'])) {
     } elseif ($newPassword !== $confirmPassword) {
         $err .= "<li>Konfirmasi kata sandi tidak cocok.</li>";
     } else {
-        // Validasi form di sisi server
-        $sqlCheckUser = "SELECT * FROM $tabel_pengguna WHERE username = '$newUsername' OR email = '$email'";
-        $resultCheckUser = mysqli_query($koneksi, $sqlCheckUser);
+        $recaptchaSecretKey = "6LceCFspAAAAAOiZ7XgAOMgIboFKgD0vsXwQb7Dn"; // Ganti dengan secret key reCAPTCHA Anda
+        $recaptchaResponse = $_POST['g-recaptcha-response'];
 
-        if (mysqli_num_rows($resultCheckUser) > 0) {
-            $userRow = mysqli_fetch_assoc($resultCheckUser);
+        $recaptchaUrl = "https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaSecretKey&response=$recaptchaResponse";
+        $recaptchaData = json_decode(file_get_contents($recaptchaUrl));
 
-            if ($userRow['username'] == $newUsername) {
-                $err .= "<li>Username <b>$newUsername</b> sudah digunakan.</li>";
-            }
-
-            if ($userRow['email'] == $email) {
-                $err .= "<li>Email <b>$email</b> sudah digunakan.</li>";
-            }
+        if (!$recaptchaData->success) {
+            $err .= "<li>Validasi reCAPTCHA gagal. Silakan coba lagi.</li>";
         } else {
-            // Simpan data pengguna baru ke database
-            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-            $otp_code = rand(100000, 999999);
-            date_default_timezone_set('Asia/Jakarta');
-            $expiration_time = date('Y-m-d H:i:s', strtotime('+2 minutes')); // Waktu kedaluwarsa dalam contoh adalah 10 menit
-            $registration_time = date('Y-m-d H:i:s'); // Tidak ada penambahan waktu di sini
 
-            $sqlInsertUser = "INSERT INTO $tabel_pengguna (username, phone_number, email, password, otp_code, otp_expiration, status, registration_time) VALUES ('$newUsername', '$phone_number', '$email', '$hashedPassword', '$otp_code', '$expiration_time', 'notverified', '$registration_time')";
-            $resultInsertUser = mysqli_query($koneksi, $sqlInsertUser);
 
-            if ($resultInsertUser) {
-                // Kode OTP
-                $otp_code = rand(100000, 999999);
-                $expiration_time = date('Y-m-d H:i:s', strtotime('+2 minutes'));
-                
-                $mail = new PHPMailer(true);
+            // Validasi form di sisi server
+            $sqlCheckUser = "SELECT * FROM $tabel_pengguna WHERE username = '$newUsername' OR email = '$email'";
+            $resultCheckUser = mysqli_query($koneksi, $sqlCheckUser);
 
-                try {
-                    // Pengaturan server SMTP Gmail
-                    $mail->isSMTP();
-                    $mail->Host = 'smtp.gmail.com';
-                    $mail->SMTPAuth = true;
-                    $mail->Username = 'ardiansyah3151@gmail.com'; // Ganti dengan alamat email Gmail Anda
-                    $mail->Password = 'japojvauiitefutx'; // Ganti dengan kata sandi Gmail Anda
-                    $mail->SMTPSecure = 'ssl';
-                    $mail->Port = 465;
+            if (mysqli_num_rows($resultCheckUser) > 0) {
+                $userRow = mysqli_fetch_assoc($resultCheckUser);
 
-                    // Pengaturan email
-                    $mail->setFrom('ardiansyah3151@gmail.com', 'bang al'); // Ganti dengan alamat email dan nama Anda
-                    $mail->addAddress($email); // Alamat email pengguna
-                    $mail->Subject = 'Code Verification';
-                    $mail->Body = "Kode verifikasi Anda: $otp_code  Code OTP akan kadaluarsa dalam 2 menit";
+                if ($userRow['username'] == $newUsername) {
+                    $err .= "<li>Username <b>$newUsername</b> sudah digunakan.</li>";
+                }
 
-                    // Kirim email
-                    $mail->send();
-
-                    // Perbarui informasi sesi verifikasi di tabel pengguna
-                    $sqlUpdateVerification = "UPDATE $tabel_pengguna SET otp_code = '$otp_code', otp_expiration = '$expiration_time' WHERE email = '$email'";
-                    mysqli_query($koneksi, $sqlUpdateVerification);
-
-                    // Set email ke dalam sesi
-                    $_SESSION['email'] = $email;
-
-                    $success_msg = "Akun berhasil dibuat. Silakan cek email Anda untuk kode verifikasi.";
-
-                    // Kosongkan field setelah berhasil mendaftar
-                    header("location: verification.php");
-                    $newUsername = $phone_number = $email = $newPassword = $confirmPassword = "";
-
-                    // Panggil fungsi penghapusan otomatis
-                    
-                } catch (Exception $e) {
-                    $err .= "<li>Gagal mengirim email verifikasi. {$mail->ErrorInfo}</li>";
+                if ($userRow['email'] == $email) {
+                    $err .= "<li>Email <b>$email</b> sudah digunakan.</li>";
                 }
             } else {
-                $err .= "<li>Gagal menyimpan data pengguna.</li>";
+                // Simpan data pengguna baru ke database
+                $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+                $otp_code = rand(100000, 999999);
+                date_default_timezone_set('Asia/Jakarta');
+                $expiration_time = date('Y-m-d H:i:s', strtotime('+2 minutes')); // Waktu kedaluwarsa dalam contoh adalah 10 menit
+                $registration_time = date('Y-m-d H:i:s'); // Tidak ada penambahan waktu di sini
+
+                $sqlInsertUser = "INSERT INTO $tabel_pengguna (username, phone_number, email, password, otp_code, otp_expiration, status, registration_time) VALUES ('$newUsername', '$phone_number', '$email', '$hashedPassword', '$otp_code', '$expiration_time', 'notverified', '$registration_time')";
+                $resultInsertUser = mysqli_query($koneksi, $sqlInsertUser);
+
+                if ($resultInsertUser) {
+                    // Kode OTP
+                    $otp_code = rand(100000, 999999);
+                    $expiration_time = date('Y-m-d H:i:s', strtotime('+2 minutes'));
+
+                    $mail = new PHPMailer(true);
+
+                    try {
+                        // Pengaturan server SMTP Gmail
+                        $mail->isSMTP();
+                        $mail->Host = 'smtp.gmail.com';
+                        $mail->SMTPAuth = true;
+                        $mail->Username = 'ardiansyah3151@gmail.com'; // Ganti dengan alamat email Gmail Anda
+                        $mail->Password = 'japojvauiitefutx'; // Ganti dengan kata sandi Gmail Anda
+                        $mail->SMTPSecure = 'ssl';
+                        $mail->Port = 465;
+
+                        // Pengaturan email
+                        $mail->setFrom('ardiansyah3151@gmail.com', 'TechForge Academy'); // Ganti dengan alamat email dan nama Anda
+                        $mail->addAddress($email); // Alamat email pengguna
+                        $mail->Subject = 'Code Verification';
+                        $mail->Body = "Kode verifikasi Anda: $otp_code  Code OTP akan kadaluarsa dalam 2 menit";
+
+                        // Kirim email
+                        $mail->send();
+
+                        // Perbarui informasi sesi verifikasi di tabel pengguna
+                        $sqlUpdateVerification = "UPDATE $tabel_pengguna SET otp_code = '$otp_code', otp_expiration = '$expiration_time' WHERE email = '$email'";
+                        mysqli_query($koneksi, $sqlUpdateVerification);
+
+                        // Set email ke dalam sesi
+                        $_SESSION['email'] = $email;
+
+                        $success_msg = "Akun berhasil dibuat. Silakan cek email Anda untuk kode verifikasi.";
+
+                        // Kosongkan field setelah berhasil mendaftar
+                        header("location: verification.php");
+                        $newUsername = $phone_number = $email = $newPassword = $confirmPassword = "";
+
+                        // Panggil fungsi penghapusan otomatis
+
+                    } catch (Exception $e) {
+                        $err .= "<li>Gagal mengirim email verifikasi. {$mail->ErrorInfo}</li>";
+                    }
+                } else {
+                    $err .= "<li>Gagal menyimpan data pengguna.</li>";
+                }
             }
         }
     }
@@ -129,21 +142,23 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
 ?>
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Bootcamp</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../login-register/fonts/linearicons/style.css">
     <link rel="stylesheet" href="../login-register/css/style.css">
+    <script src="https://www.google.com/recaptcha/api.js"></script>
 </head>
 
 <body>
 
-<div class="wrapper">
-    <div class="inner">
-        <img src="../login-register/images/image-1.png" alt="" class="image-1">
-        
-        
+    <div class="wrapper">
+        <div class="inner">
+            <img src="../login-register/images/image-1.png" alt="" class="image-1">
+
+
             <form action="" method="post">
                 <h3>New Account?</h3>
 
@@ -173,19 +188,20 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                     <span class="lnr lnr-lock"></span>
                     <input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password">
                 </div>
+                <div class="g-recaptcha" data-sitekey="6LceCFspAAAAAE2ZLBwHhGBXA1lxMVOyMP_qG2BQ"></div>
                 <button type="submit" name="register">
                     <span>Register</span>
                 </button>
             </form>
-        
 
 
-        <img src="../login-register/images/image-2.png" alt="" class="image-2">
+
+            <img src="../login-register/images/image-2.png" alt="" class="image-2">
+        </div>
     </div>
-</div>
 
-<script src="../login-register/js/jquery-3.3.1.min.js"></script>
-<script src="../login-registerjs/main.js"></script>
+    <script src="../login-register/js/jquery-3.3.1.min.js"></script>
+    <script src="../login-registerjs/main.js"></script>
 </body>
-</html>
 
+</html>
