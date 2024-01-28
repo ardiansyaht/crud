@@ -35,16 +35,14 @@ if ($_SESSION['session_role'] !== 'admin') {
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand-->
         <a class="navbar-brand ps-3" href="homepage.php">
-            <?php if (isset($_SESSION['session_username'])) : ?>
-                <i class="fas fa-user"></i> <?php echo $_SESSION['session_username']; ?>
+            <?php if (isset($_SESSION['session_role'])) : ?>
+                <i class="fas fa-user"></i> <?php echo $_SESSION['session_role']; ?>
             <?php endif; ?>
         </a>
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!">
             <i class="fas fa-bars"></i>
         </button>
-
-
         <!--navbar search-->
         <form class="form-inline mb-2 ml-auto" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="GET">
             <div class="input-group">
@@ -64,8 +62,8 @@ if ($_SESSION['session_role'] !== 'admin') {
                     <i class="fas fa-user fa-fw"></i>
                     <span id="loggedInUsername">
                         <?php
-                        if (isset($_SESSION['session_username'])) {
-                            echo $_SESSION['session_username'];
+                        if (isset($_SESSION['session_role'])) {
+                            echo $role = $_SESSION['session_role'];
                         }
                         ?>
                     </span>
@@ -80,7 +78,6 @@ if ($_SESSION['session_role'] !== 'admin') {
                 </ul>
             </li>
         </ul>
-
     </nav>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
@@ -103,12 +100,11 @@ if ($_SESSION['session_role'] !== 'admin') {
                             </a> -->
                     </div>
                 </div>
-
                 <div class="sb-sidenav-footer">
                     <div class="small">Logged in as:</div>
                     <?php
-                    if (isset($_SESSION['session_username'])) {
-                        echo $_SESSION['session_username'];
+                    if (isset($_SESSION['session_role'])) {
+                        $role = $_SESSION['session_role'];
                     }
                     ?>
                 </div>

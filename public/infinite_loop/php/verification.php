@@ -1,6 +1,6 @@
 <?php
 session_start();
-require __DIR__ . '/../../../bootstrap/vendor/autoload.php';
+require __DIR__ . '/../../../nonpublic/vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -22,52 +22,65 @@ if (isset($_POST['resend_code'])) {
     if (empty($email_resend)) {
         $error_message = "Email is empty";
     } else {
-        // Logika pengiriman ulang kode verifikasi ke email tertentu
-        // ...
+        // Pengecekan apakah email ada di database
+        $sqlCheckEmailExist = "SELECT * FROM $tabel_pengguna WHERE email = '$email_resend'";
+        $resultCheckEmailExist = mysqli_query($koneksi, $sqlCheckEmailExist);
 
-        // Contoh pesan sukses
-        $success_message = "Kode verifikasi telah dikirim ulang ke email Anda.";
+        if (!$resultCheckEmailExist || mysqli_num_rows($resultCheckEmailExist) === 0) {
+            $error_message = "Email tidak terdaftar di sistem kami.";
+        } else {
+            // Pengecekan apakah pengguna sudah terverifikasi sebelumnya
+            $sqlCheckUserVerified = "SELECT * FROM $tabel_pengguna WHERE email = '$email_resend' AND status = 'verified'";
+            $resultCheckUserVerified = mysqli_query($koneksi, $sqlCheckUserVerified);
 
-        // Tambahkan logika pengiriman ulang kode verifikasi ke email
-        $otp_code = rand(100000, 999999);
-        date_default_timezone_set('Asia/Jakarta');
-        $expiration_time = date('Y-m-d H:i:s', strtotime('+2 minutes'));
+            if ($resultCheckUserVerified && mysqli_num_rows($resultCheckUserVerified) > 0) {
+                $error_message = "Email sudah terverifikasi sebelumnya.";
+            } else {
+                // Contoh pesan sukses
+                $success_message = "Kode verifikasi telah dikirim ulang ke email Anda.";
 
-        $mail = new PHPMailer(true);
+                // Tambahkan logika pengiriman ulang kode verifikasi ke email
+                $otp_code = rand(100000, 999999);
+                date_default_timezone_set('Asia/Jakarta');
+                $expiration_time = date('Y-m-d H:i:s', strtotime('+2 minutes'));
 
-        try {
-            // Pengaturan server SMTP Gmail
-            $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'ardiansyah3151@gmail.com'; // Ganti dengan alamat email Gmail Anda
-            $mail->Password = 'ecesgskgnryehfim'; // Ganti dengan kata sandi Gmail Anda
-            $mail->SMTPSecure = 'ssl';
-            $mail->Port = 465;
+                $mail = new PHPMailer(true);
 
-            // Pengaturan email
-            $mail->setFrom('ardiansyah3151@gmail.com', 'Code'); // Ganti dengan alamat email dan nama Anda
-            $mail->addAddress($email_resend); // Alamat email pengguna
-            $mail->Subject = 'Resend Code Verification';
-            $mail->Body = "Kode verifikasi Anda: $otp_code  Code OTP akan kadaluarsa dalam 2 menit";
+                try {
+                    // Pengaturan server SMTP Gmail
+                    $mail->isSMTP();
+                    $mail->Host = 'smtp.gmail.com';
+                    $mail->SMTPAuth = true;
+                    $mail->Username = 'ardiansyah3151@gmail.com';
+                    $mail->Password = 'ecesgskgnryehfim';
+                    $mail->SMTPSecure = 'ssl';
+                    $mail->Port = 465;
 
-            // Kirim email
-            $mail->send();
+                    // Pengaturan email
+                    $mail->setFrom('ardiansyah3151@gmail.com', 'Code'); // Ganti dengan alamat email dan nama Anda
+                    $mail->addAddress($email_resend); // Alamat email pengguna
+                    $mail->Subject = 'Resend Code Verification';
+                    $mail->Body = "Kode verifikasi Anda: $otp_code  Code OTP akan kadaluarsa dalam 2 menit";
 
-            // Perbarui informasi sesi verifikasi di tabel pengguna
-            $sqlUpdateVerification = "UPDATE $tabel_pengguna SET otp_code = '$otp_code', otp_expiration = '$expiration_time' WHERE email = '$email_resend'";
-            mysqli_query($koneksi, $sqlUpdateVerification);
+                    // Kirim email
+                    $mail->send();
 
-            // Set email ke dalam sesi
-            $_SESSION['email'] = $email_resend;
+                    // Perbarui informasi sesi verifikasi di tabel pengguna
+                    $sqlUpdateVerification = "UPDATE $tabel_pengguna SET otp_code = '$otp_code', otp_expiration = '$expiration_time' WHERE email = '$email_resend'";
+                    mysqli_query($koneksi, $sqlUpdateVerification);
 
-            $success_message = "Kode verifikasi telah dikirim ulang ke email Anda.";
+                    // Set email ke dalam sesi
+                    $_SESSION['email'] = $email_resend;
 
-            // Kosongkan field setelah berhasil mendaftar
-            header("location: verification.php");
-            $newUsername = $phone_number = $email = $newPassword = $confirmPassword = "";
-        } catch (Exception $e) {
-            $error_message = "Gagal mengirim email verifikasi. {$mail->ErrorInfo}";
+                    $success_message = "Kode verifikasi telah dikirim ulang ke email Anda.";
+
+                    // Kosongkan field setelah berhasil mendaftar
+                    header("location: verification.php");
+                    $newUsername = $phone_number = $email = $newPassword = $confirmPassword = "";
+                } catch (Exception $e) {
+                    $error_message = "Gagal mengirim email verifikasi. {$mail->ErrorInfo}";
+                }
+            }
         }
     }
 }
@@ -79,29 +92,55 @@ if (isset($_POST['verify'])) {
 
     if (empty($email)) {
         $error_message = "Email is empty";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        // Validasi format email
+        $error_message = "Format email tidak valid.";
+    } elseif (!preg_match('/^\d{6}$/', $otp_code)) {
+        // Validasi panjang OTP harus 6 angka
+        $error_message = "Kode OTP harus terdiri dari 6 angka.";
     } else {
-        $sqlCheckOTP = "SELECT * FROM $tabel_pengguna WHERE email = '$email' AND otp_code = '$otp_code' AND otp_expiration > NOW()";
+        // Pengecekan apakah email ada di database
+        $sqlCheckEmailExist = "SELECT * FROM $tabel_pengguna WHERE email = '$email'";
+        $resultCheckEmailExist = mysqli_query($koneksi, $sqlCheckEmailExist);
 
-        $resultCheckOTP = mysqli_query($koneksi, $sqlCheckOTP);
-
-        if ($resultCheckOTP && mysqli_num_rows($resultCheckOTP) > 0) {
-            $sqlUpdateVerificationStatus = "UPDATE $tabel_pengguna SET status = 'verified' WHERE email = '$email'";
-            $resultUpdateVerificationStatus = mysqli_query($koneksi, $sqlUpdateVerificationStatus);
-
-            if ($resultUpdateVerificationStatus) {
-                // Redirect ke halaman login jika verifikasi berhasil
-                header("location: login_bc.php");
-                exit();
-            } else {
-                // Gagal memperbarui status verifikasi
-                $error_message = "Gagal memperbarui status verifikasi pengguna. Silakan coba lagi.";
-            }
+        if (!$resultCheckEmailExist || mysqli_num_rows($resultCheckEmailExist) === 0) {
+            $error_message = "Email tidak terdaftar di sistem kami.";
         } else {
-            // OTP tidak valid atau sudah kedaluwarsa
-            $error_message = "Kode OTP tidak valid atau sudah kedaluwarsa. Silakan coba lagi.";
+            // Pengecekan apakah pengguna sudah terverifikasi sebelumnya
+            $sqlCheckUserVerified = "SELECT * FROM $tabel_pengguna WHERE email = '$email' AND status = 'verified'";
+            $resultCheckUserVerified = mysqli_query($koneksi, $sqlCheckUserVerified);
+
+            if ($resultCheckUserVerified && mysqli_num_rows($resultCheckUserVerified) > 0) {
+                // Pengguna sudah diverifikasi sebelumnya
+                $error_message = "Email sudah diverifikasi sebelumnya.";
+            } else {
+                $sqlCheckOTP = "SELECT * FROM $tabel_pengguna WHERE email = '$email' AND otp_code = '$otp_code' AND otp_expiration > NOW()";
+
+                $resultCheckOTP = mysqli_query($koneksi, $sqlCheckOTP);
+
+                if ($resultCheckOTP && mysqli_num_rows($resultCheckOTP) > 0) {
+                    $sqlUpdateVerificationStatus = "UPDATE $tabel_pengguna SET status = 'verified' WHERE email = '$email'";
+                    $resultUpdateVerificationStatus = mysqli_query($koneksi, $sqlUpdateVerificationStatus);
+
+                    if ($resultUpdateVerificationStatus) {
+                        // Redirect ke halaman login jika verifikasi berhasil
+                        header("location: login_bc.php");
+                        exit();
+                    } else {
+                        // Gagal memperbarui status verifikasi
+                        $error_message = "Gagal memperbarui status verifikasi pengguna. Silakan coba lagi.";
+                    }
+                } else {
+                    // OTP tidak valid atau sudah kedaluwarsa
+                    $error_message = "Kode OTP tidak valid atau sudah kedaluwarsa. Silakan coba lagi.";
+                }
+            }
         }
     }
+    $otp_code = $email = "";
 }
+
+
 
 ?>
 <!DOCTYPE html>
@@ -112,6 +151,7 @@ if (isset($_POST['verify'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../login-register/fonts/linearicons/style.css">
     <link rel="stylesheet" href="../login-register/css/style.css">
+    <link rel="icon" type="image/png" href="../img/favicon.ico" />
     <style>
         /* Tambahkan gaya untuk pesan kesalahan dan sukses */
         .error-message,

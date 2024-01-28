@@ -4,7 +4,7 @@ session_start();
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require __DIR__ . '/../../../bootstrap/vendor/autoload.php';
+require __DIR__ . '/../../../nonpublic/vendor/autoload.php';
 
 $emailSudahTerdaftar = false;
 
@@ -294,17 +294,17 @@ function isEmailRegistered($email)
     <script>
     function checkLogin() {
       ' . (isset($_SESSION['session_email']) ? '
-            var userEmail = "' . $_SESSION['session_email'] . '";
-            var isEmailRegistered = ' . (isEmailRegistered($_SESSION['session_email']) ? 'true' : 'false') . ';
-            if (isEmailRegistered) {
-                Swal.fire({
-                    icon: "info",
-                    title: "Oops...",
-                    text: "Email sudah terdaftar. Bila ada perubahan silahkan hubungi Customer Service."
-                });
-                return false;
-            }
-        ' : '') . '
+          var userEmail = "' . $_SESSION['session_email'] . '";
+          var isEmailRegistered = ' . (isEmailRegistered($_SESSION['session_email']) ? 'true' : 'false') . ';
+          if (isEmailRegistered) {
+              Swal.fire({
+                  icon: "info",
+                  title: "Oops...",
+                  text: "Email sudah terdaftar. Bila ada perubahan silahkan hubungi Customer Service."
+              });
+              return false;
+          }
+      ' : '') . '
       ' . (!isset($_SESSION['session_email']) && (!isset($_SESSION['session_role']) || $_SESSION['session_role'] !== 'admin') ? '
           Swal.fire({
               icon: "error",
@@ -316,11 +316,8 @@ function isEmailRegistered($email)
               }
           }); return false;' : 'window.location.href = "../../crud/php/create.php";') . '
   }
-</script>';
+  </script>';
     ?>
-
-
-
     <!-- Contact -->
     <section id="contact" class="tm-section-pad-top tm-parallax-2">
 

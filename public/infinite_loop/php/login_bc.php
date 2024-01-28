@@ -122,6 +122,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
     <meta charset="utf-8">
     <title>Bootcamp</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../img/favicon.ico" />
     <link rel="stylesheet" href="../login-register/fonts/linearicons/style.css">
     <link rel="stylesheet" href="../login-register/css/style.css">
     <style>

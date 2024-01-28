@@ -10,56 +10,61 @@ $koneksi = mysqli_connect($host_db, $user_db, $pass_db, $nama_db);
 $err = "";
 $email = "";
 
-// Cek apakah pengguna sudah login
-if (!isset($_SESSION['session_email'])) {
-    header("location: login.php");
+// Periksa apakah 'session_email' dan 'session_role' sudah di-set
+if (isset($_SESSION['session_email']) && isset($_SESSION['session_role'])) {
+    $allowedRole = $_SESSION['session_role'];
+
+
+    if ($allowedRole === 'admin') {
+    } else {
+
+        $allowedEmail = $_SESSION['session_email'];
+
+        // Query untuk mendapatkan data pengguna berdasarkan email
+        $query = "SELECT * FROM tb_login_bc WHERE email = ?";
+        $stmt = mysqli_prepare($koneksi, $query);
+        mysqli_stmt_bind_param($stmt, "s", $allowedEmail);
+        mysqli_stmt_execute($stmt);
+
+        $result = mysqli_stmt_get_result($stmt);
+
+        if (!$result) {
+            // Handle kesalahan query jika perlu
+            die("Query failed");
+        }
+
+        $user = mysqli_fetch_assoc($result);
+
+        if (!$user || $user['status'] !== 'verified') {
+            // Email tidak ditemukan di database atau status tidak terverifikasi
+            // Lakukan sesuatu (redirect atau lainnya)
+            header("location: ../../infinite_loop/php/homepage.php");
+            exit();
+        }
+
+        // Cek apakah email sudah terdaftar di tb_peserta
+        $query_cek_peserta = "SELECT * FROM peserta WHERE email = ?";
+        $stmt_cek_peserta = mysqli_prepare($koneksi, $query_cek_peserta);
+        mysqli_stmt_bind_param($stmt_cek_peserta, "s", $allowedEmail);
+        mysqli_stmt_execute($stmt_cek_peserta);
+
+        $result_cek_peserta = mysqli_stmt_get_result($stmt_cek_peserta);
+
+        if (mysqli_num_rows($result_cek_peserta) > 0) {
+            // Email sudah terdaftar di tb_peserta, beri respons atau tindakan yang sesuai
+            $notification = "Anda sudah mengisi formulir pendaftaran.";
+
+            // Replace the following line with the SweetAlert code
+            echo json_encode(array('success' => false, 'error' => $notification));
+            header("location: ../../infinite_loop/php/homepage.php");
+            exit();
+        }
+    }
+} else {
+    // Jika 'session_email' atau 'session_role' tidak di-set, redirect atau tindakan lainnya
+    header("location: ../../infinite_loop/php/homepage.php");
     exit();
 }
-
-if ($_SESSION['session_role'] !== 'admin') {
-    $allowedEmail = $_SESSION['session_email'];
-
-    // Query untuk mendapatkan data pengguna berdasarkan email
-    $query = "SELECT * FROM tb_login_bc WHERE email = ?";
-    $stmt = mysqli_prepare($koneksi, $query);
-    mysqli_stmt_bind_param($stmt, "s", $allowedEmail);
-    mysqli_stmt_execute($stmt);
-
-    $result = mysqli_stmt_get_result($stmt);
-
-    if (!$result) {
-        // Handle kesalahan query jika perlu
-        die("Query failed");
-    }
-
-    $user = mysqli_fetch_assoc($result);
-
-    if (!$user || $user['status'] !== 'verified') {
-        // Email tidak ditemukan di database atau status tidak terverifikasi
-        // Lakukan sesuatu (redirect atau lainnya)
-        header("location: ../../infinite_loop/php/homepage.php");
-        exit();
-    }
-
-    // Cek apakah email sudah terdaftar di tb_peserta
-    $query_cek_peserta = "SELECT * FROM peserta WHERE email = ?";
-    $stmt_cek_peserta = mysqli_prepare($koneksi, $query_cek_peserta);
-    mysqli_stmt_bind_param($stmt_cek_peserta, "s", $allowedEmail);
-    mysqli_stmt_execute($stmt_cek_peserta);
-
-    $result_cek_peserta = mysqli_stmt_get_result($stmt_cek_peserta);
-
-    if (mysqli_num_rows($result_cek_peserta) > 0) {
-        // Email sudah terdaftar di tb_peserta, beri respons atau tindakan yang sesuai
-        $notification = "Anda sudah mengisi formulir pendaftaran.";
-
-        // Replace the following line with the SweetAlert code
-        echo json_encode(array('success' => false, 'error' => $notification));
-        header("location: ../../infinite_loop/php/homepage.php");
-        exit();
-    }
-}
-
 // Fungsi untuk mencegah inputan karakter yang tidak sesuai
 function input($data)
 {
@@ -68,6 +73,7 @@ function input($data)
     $data = htmlspecialchars($data);
     return $data;
 }
+
 $bidang = '';
 
 // Cek apakah ada kiriman form dari method post
@@ -79,26 +85,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $alamat = input($_POST["alamat"]);
     $bidang = input($_POST["bidang"]);
 
-    // Cek apakah bidang yang dipilih di form sesuai dengan opsi yang tersedia
-    $opsi_bidang = ['web-development', 'data-science', 'full-stack-development', 'mobile-app-development', 'cyber-security', 'devops', 'ui-ux-design', 'game-development'];
-    if (in_array($bidang, $opsi_bidang)) {
-        // Bidang yang dipilih valid, lanjutkan dengan penyimpanan data
-        $sql = "INSERT INTO peserta (nama, sekolah, jurusan, no_hp, alamat, email, bidang) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $stmt = mysqli_prepare($koneksi, $sql);
-        mysqli_stmt_bind_param($stmt, "sssssss", $nama, $sekolah, $jurusan, $no_hp, $alamat, $allowedEmail, $bidang);
-        $hasil = mysqli_stmt_execute($stmt);
-
-        if ($hasil) {
-            echo json_encode(array('success' => true));
-        } else {
-            echo json_encode(array('success' => false, 'error' => mysqli_error($koneksi)));
+    // Validasi karakter maksimum
+    function validateMaxLength($value, $max_length, $field_name)
+    {
+        if (strlen($value) > $max_length) {
+            return "$field_name terlalu panjang. Maksimum $max_length karakter diperbolehkan.";
         }
+        return null;
+    }
+    $err = [
+        validateMaxLength($nama, 255, 'Nama'),
+        validateMaxLength($sekolah, 255, 'Sekolah'),
+        validateMaxLength($jurusan, 255, 'Jurusan'),
+        validateMaxLength($no_hp, 15, 'Nomor Telepon'),
+        validateMaxLength($alamat, 255, 'Alamat')
+    ];
 
-        // Hentikan eksekusi lebih lanjut setelah memberikan respons JSON
-        exit();
+    // Hapus elemen array yang bernilai null (valid)
+    $err = array_filter($err);
+
+    if (empty($err)) {
+        // Lanjutkan dengan penyimpanan data jika tidak ada kesalahan
+        $opsi_bidang = ['web-development', 'data-science', 'full-stack-development', 'mobile-app-development', 'cyber-security', 'devops', 'ui-ux-design', 'game-development'];
+        if (in_array($bidang, $opsi_bidang)) {
+            // Bidang yang dipilih valid, lanjutkan dengan penyimpanan data
+            $sql = "INSERT INTO peserta (nama, sekolah, jurusan, no_hp, alamat, email, bidang) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $stmt = mysqli_prepare($koneksi, $sql);
+            mysqli_stmt_bind_param($stmt, "sssssss", $nama, $sekolah, $jurusan, $no_hp, $alamat, $allowedEmail, $bidang);
+            $hasil = mysqli_stmt_execute($stmt);
+
+            if ($hasil) {
+                echo json_encode(array('success' => true));
+            } else {
+                echo json_encode(array('success' => false, 'error' => mysqli_error($koneksi)));
+            }
+
+            // Hentikan eksekusi lebih lanjut setelah memberikan respons JSON
+            exit();
+        } else {
+            // Jika bidang yang dipilih tidak valid, Anda bisa memberikan respons atau melakukan tindakan lain
+            echo json_encode(array('success' => false, 'error' => 'Bidang yang dipilih tidak valid.'));
+            exit();
+        }
     } else {
-        // Jika bidang yang dipilih tidak valid, Anda bisa memberikan respons atau melakukan tindakan lain
-        echo json_encode(array('success' => false, 'error' => 'Bidang yang dipilih tidak valid.'));
+        // Tampilkan pesan kesalahan
+        echo json_encode(array('success' => false, 'error' => implode('<br>', $err)));
         exit();
     }
 }
@@ -112,6 +143,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Pendaftaran Peserta</title>
+    <link rel="icon" type="image/png" href="../assets/img/favicon.ico" />
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">

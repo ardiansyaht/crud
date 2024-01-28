@@ -88,7 +88,8 @@
             ?>
         </table>
         <!-- <a href="create.php" class="btn btn-primary" role="button">Tambah Data</a> -->
-        <a href="generate_pdf.php" class="btn btn-success" role="button">Download PDF</a>
+        <a href="generate_pdf.php" class="btn btn-danger" role="button">Download PDF</a>
+        <a href="generate_excel.php" class="btn btn-success" role="button">Download Excel</a>
     </div>
 </body>
 

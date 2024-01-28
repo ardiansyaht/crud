@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . ('/../../../bootstrap/tcpdf/tcpdf.php');
+require __DIR__ . ('/../../../nonpublic/tcpdf/tcpdf.php');
 include "koneksi.php"; // Pastikan file koneksi.php ada
 session_start();
 
@@ -16,7 +16,7 @@ if ($_SESSION['session_role'] !== 'admin') {
 $pdf = new TCPDF();
 
 // Set dokumen PDF
-$pdf->SetAuthor('Your Name');
+$pdf->SetAuthor('TechForge Academey');
 $pdf->SetTitle('Daftar Peserta Pelatihan');
 
 // Tambahkan halaman
@@ -40,9 +40,10 @@ while ($data = mysqli_fetch_array($result)) {
     $content .= "<td>{$data['sekolah']}</td>";
     $content .= "<td>{$data['jurusan']}</td>";
     $content .= "<td>{$data['no_hp']}</td>";
+    $content .= "<td>{$data['alamat']}</td>";
     $content .= "<td>{$data['email']}</td>"; // Tambahkan kolom Email
     $content .= "<td>{$data['bidang']}</td>"; // Tambahkan kolom Bidang
-    $content .= "<td>{$data['alamat']}</td>";
+
     $content .= "</tr>";
 }
 

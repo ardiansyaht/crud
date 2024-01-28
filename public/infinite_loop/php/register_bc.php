@@ -1,6 +1,6 @@
 <?php
 session_start();
-require __DIR__ . '/../../../bootstrap/vendor/autoload.php';
+require __DIR__ . '/../../../nonpublic/vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -14,30 +14,30 @@ $koneksi        = mysqli_connect($host_db, $user_db, $pass_db, $nama_db);
 
 $success_msg      = "";
 $err              = "";
-$newUsername      = "";
 $phone_number     = "";
 $email            = "";
 $newPassword      = "";
 $confirmPassword  = "";
-
+$auto_username    = isset($_SESSION['auto_username']) ? $_SESSION['auto_username'] : "";
 
 function deleteUnverifiedAccounts($koneksi)
 {
     $current_time = date('Y-m-d H:i:s');
+    date_default_timezone_set('Asia/Jakarta');
     $two_minutes_ago = date('Y-m-d H:i:s', strtotime('-1 hour'));
     $sql = "DELETE FROM tb_login_bc WHERE status = 'notverified' AND registration_time < '$two_minutes_ago'";
     mysqli_query($koneksi, $sql);
 }
 
 if (isset($_POST['register'])) {
-    $newUsername       = $_POST['new_username'];
-    $phone_number      = $_POST['phone_number'];
-    $email             = $_POST['email'];
-    $newPassword       = $_POST['new_password'];
-    $confirmPassword   = $_POST['confirm_password'];
+    $auto_username = $_SESSION['auto_username'];
+    $phone_number = $_POST['phone_number'];
+    $email = $_POST['email'];
+    $newPassword = $_POST['new_password'];
+    $confirmPassword = $_POST['confirm_password'];
 
     // Validasi form di sisi klien
-    if (empty($newUsername) || empty($phone_number) || empty($email) || empty($newPassword) || empty($confirmPassword)) {
+    if (empty($auto_username) || empty($phone_number) || empty($email) || empty($newPassword) || empty($confirmPassword)) {
         $err .= "<li>Silakan lengkapi semua kolom.</li>";
     } elseif (strlen($newPassword) < 5) {
         $err .= "<li>Kata sandi harus terdiri dari minimal 5 karakter.</li>";
@@ -53,31 +53,21 @@ if (isset($_POST['register'])) {
         if (!$recaptchaData->success) {
             $err .= "<li>Validasi reCAPTCHA gagal. Silakan coba lagi.</li>";
         } else {
-
-
             // Validasi form di sisi server
-            $sqlCheckUser = "SELECT * FROM $tabel_pengguna WHERE username = '$newUsername' OR email = '$email'";
+            $sqlCheckUser = "SELECT * FROM $tabel_pengguna WHERE auto_username = '$auto_username' OR email = '$email'";
             $resultCheckUser = mysqli_query($koneksi, $sqlCheckUser);
 
             if (mysqli_num_rows($resultCheckUser) > 0) {
-                $userRow = mysqli_fetch_assoc($resultCheckUser);
-
-                if ($userRow['username'] == $newUsername) {
-                    $err .= "<li>Username <b>$newUsername</b> sudah digunakan.</li>";
-                }
-
-                if ($userRow['email'] == $email) {
-                    $err .= "<li>Email <b>$email</b> sudah digunakan.</li>";
-                }
+                $err .= "<li>Username atau email sudah digunakan.</li>";
             } else {
                 // Simpan data pengguna baru ke database
                 $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                 $otp_code = rand(100000, 999999);
                 date_default_timezone_set('Asia/Jakarta');
-                $expiration_time = date('Y-m-d H:i:s', strtotime('+2 minutes')); // Waktu kedaluwarsa dalam contoh adalah 10 menit
+                $expiration_time = date('Y-m-d H:i:s', strtotime('+2 minutes')); // Waktu kedaluwarsa dalam contoh adalah 2 menit
                 $registration_time = date('Y-m-d H:i:s'); // Tidak ada penambahan waktu di sini
 
-                $sqlInsertUser = "INSERT INTO $tabel_pengguna (username, phone_number, email, password, otp_code, otp_expiration, status, registration_time) VALUES ('$newUsername', '$phone_number', '$email', '$hashedPassword', '$otp_code', '$expiration_time', 'notverified', '$registration_time')";
+                $sqlInsertUser = "INSERT INTO $tabel_pengguna (auto_username, phone_number, email, password, otp_code, otp_expiration, status, registration_time) VALUES ('$auto_username', '$phone_number', '$email', '$hashedPassword', '$otp_code', '$expiration_time', 'notverified', '$registration_time')";
                 $resultInsertUser = mysqli_query($koneksi, $sqlInsertUser);
 
                 if ($resultInsertUser) {
@@ -117,10 +107,7 @@ if (isset($_POST['register'])) {
 
                         // Kosongkan field setelah berhasil mendaftar
                         header("location: verification.php");
-                        $newUsername = $phone_number = $email = $newPassword = $confirmPassword = "";
-
-                        // Panggil fungsi penghapusan otomatis
-
+                        exit();
                     } catch (Exception $e) {
                         $err .= "<li>Gagal mengirim email verifikasi. {$mail->ErrorInfo}</li>";
                     }
@@ -147,6 +134,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
     <meta charset="utf-8">
     <title>Bootcamp</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../img/favicon.ico" />
     <link rel="stylesheet" href="../login-register/fonts/linearicons/style.css">
     <link rel="stylesheet" href="../login-register/css/style.css">
     <script src="https://www.google.com/recaptcha/api.js"></script>
@@ -170,7 +158,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
 
                 <div class="form-holder">
                     <span class="lnr lnr-user"></span>
-                    <input type="text" class="form-control" name="new_username" placeholder="Username" value="<?php echo $newUsername; ?>">
+                    <input type="text" class="form-control" name="new_username" placeholder="Username" value="<?php echo htmlspecialchars($auto_username); ?>" readonly>
                 </div>
                 <div class="form-holder">
                     <span class="lnr lnr-phone-handset"></span>

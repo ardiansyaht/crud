@@ -68,6 +68,7 @@ if (isset($_POST['reset_password'])) {
     <meta charset="UTF-8">
     <title>Reset Password</title>
     <link rel="stylesheet" href="../login-register/fonts/linearicons/style.css">
+    <link rel="icon" type="image/png" href="../img/favicon.ico" />
     <link rel="stylesheet" href="../login-register/css/style.css">
     <!-- Tambahkan CSS sesuai kebutuhan -->
 </head>

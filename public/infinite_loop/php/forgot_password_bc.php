@@ -1,6 +1,6 @@
 <?php
 session_start();
-require __DIR__ . '/../../../bootstrap/vendor/autoload.php';
+require __DIR__ . '/../../../nonpublic/vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -70,8 +70,8 @@ if (isset($_POST['forgot_password'])) {
     <meta charset="UTF-8">
     <title>Forgot Password</title>
     <link rel="stylesheet" href="../login-register/fonts/linearicons/style.css">
+    <link rel="icon" type="image/png" href="../img/favicon.ico" />
     <link rel="stylesheet" href="../login-register/css/style.css">
-    <!-- Tambahkan CSS sesuai kebutuhan -->
 </head>
 
 <body>

@@ -78,6 +78,10 @@ if (isset($_POST['login'])) {
             $_SESSION['session_username'] = $username;
             $_SESSION['session_role'] = $r1['role'];
 
+            $_SESSION['auto_username'] = explode('@', $username)[0];
+
+
+
             header("location:../../infinite_loop/php/homepage.php");
             exit();
         }
