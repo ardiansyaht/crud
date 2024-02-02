@@ -13,22 +13,16 @@
         <?php
         session_start();
 
-        // Cek apakah pengguna sudah login
-        if (!isset($_SESSION['session_username'])) {
-            header("location: login.php");
-            exit();
-        }
-        if ($_SESSION['session_role'] !== 'admin') {
-            // Redirect atau lakukan sesuatu jika peran bukan "admin"
-            // Contoh: redirect ke halaman tertentu atau tampilkan pesan error
-            header("location: unauthorized.php");
-            exit();
-        }
-
-        // Include file koneksi, untuk koneksikan ke database
+        // Include the PDO connection
         include "koneksi.php";
 
-        // Fungsi untuk mencegah inputan karakter yang tidak sesuai
+        if ($_SESSION['session_role'] !== 'admin') {
+            // Redirect or do something if the role is not "admin"
+            header("location: ../../../unauthorized.php");
+            exit();
+        }
+
+        // Function to prevent invalid input characters
         function input($data)
         {
             $data = trim($data);
@@ -37,16 +31,18 @@
             return $data;
         }
 
-        // Cek apakah ada nilai yang dikirim menggunakan method GET dengan nama id_peserta
+        // Check if there is a value sent using the GET method with the name id_peserta
         if (isset($_GET['id_peserta'])) {
             $id_peserta = input($_GET["id_peserta"]);
 
-            $sql = "SELECT * FROM peserta WHERE id_peserta = $id_peserta";
-            $hasil = mysqli_query($kon, $sql);
-            $data = mysqli_fetch_assoc($hasil);
+            $sql = "SELECT * FROM peserta WHERE id_peserta = :id_peserta";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':id_peserta', $id_peserta, PDO::PARAM_INT);
+            $stmt->execute();
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
         }
 
-        // Cek apakah ada kiriman form dari method post
+        // Check if there is a form submission via the POST method
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $id_peserta = htmlspecialchars($_POST["id_peserta"]);
             $nama = input($_POST["nama"]);
@@ -56,22 +52,33 @@
             $alamat = input($_POST["alamat"]);
             $bidang = input($_POST["bidang"]);
 
-            // Query update data pada tabel peserta
+            // Query to update data in the peserta table
             $sql = "UPDATE peserta SET
-            nama = '$nama',
-            sekolah = '$sekolah',
-            jurusan = '$jurusan',
-            no_hp = '$no_hp',
-            alamat = '$alamat',
-            bidang = '$bidang'
-            WHERE id_peserta = $id_peserta";
+            nama = :nama,
+            sekolah = :sekolah,
+            jurusan = :jurusan,
+            no_hp = :no_hp,
+            alamat = :alamat,
+            bidang = :bidang
+            WHERE id_peserta = :id_peserta";
 
-            // Mengeksekusi atau menjalankan query diatas
-            $hasil = mysqli_query($kon, $sql);
+            // Execute the query
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':nama', $nama, PDO::PARAM_STR);
+            $stmt->bindParam(':sekolah', $sekolah, PDO::PARAM_STR);
+            $stmt->bindParam(':jurusan', $jurusan, PDO::PARAM_STR);
+            $stmt->bindParam(':no_hp', $no_hp, PDO::PARAM_STR);
+            $stmt->bindParam(':alamat', $alamat, PDO::PARAM_STR);
+            $stmt->bindParam(':bidang', $bidang, PDO::PARAM_STR);
+            $stmt->bindParam(':id_peserta', $id_peserta, PDO::PARAM_INT);
 
-            // Kondisi apakah berhasil atau tidak dalam mengeksekusi query diatas
-            if ($hasil) {
+            // Execute the statement
+            $stmt->execute();
+
+            // Check if the query was successful
+            if ($stmt->rowCount() > 0) {
                 header("Location: dashboard.php");
+                exit();
             } else {
                 echo "<div class='alert alert-danger'> Data Gagal disimpan.</div>";
             }
@@ -95,7 +102,7 @@
             </div>
             <div class="form-group">
                 <label for="no_hp">No HP:</label>
-                <input type="text" name="no_hp" class="form-control" placeholder="Masukkan No HP" required value="<?php echo $data['no_hp']; ?>" />
+                <input type="number" name="no_hp" class="form-control" placeholder="Masukkan No HP" required value="<?php echo $data['no_hp']; ?>" />
             </div>
             <div class="form-group">
                 <label for="alamat">Alamat:</label>

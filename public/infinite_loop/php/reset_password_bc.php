@@ -1,12 +1,14 @@
-<!-- reset_password_bc.php -->
-
 <?php
-session_start();
-
-$host_db        = "localhost";
-$user_db        = "root";
-$pass_db        = "";
-$nama_db        = "crud";
+session_start([
+    'cookie_secure' => true,
+    'cookie_httponly' => true,
+    'use_only_cookies' => true,
+]);
+require  '../../crud/php/config_koneksi.php';
+$host_db        = DB_HOST;
+$user_db        = DB_USER;
+$pass_db        = DB_PASS;
+$nama_db        = DB_NAME;
 $tabel_pengguna = "tb_login_bc";
 $koneksi        = mysqli_connect($host_db, $user_db, $pass_db, $nama_db);
 

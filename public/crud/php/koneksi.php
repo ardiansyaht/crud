@@ -1,11 +1,10 @@
 <?php
-
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "crud";
-
-$kon = mysqli_connect($host, $user, $password, $db);
-if (!$kon) {
-        die("Koneksi Gagal:" . mysqli_connect_error());
+// connection.php
+require_once('config_koneksi.php');
+try {
+        // Buat koneksi PDO
+        $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8", DB_USER, DB_PASS);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+        die("Koneksi Gagal: " . $e->getMessage());
 }

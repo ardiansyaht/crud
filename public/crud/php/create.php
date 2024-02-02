@@ -1,16 +1,22 @@
 <?php
-session_start();
+session_start([
+    'cookie_secure' => true,
+    'cookie_httponly' => true,
+    'use_only_cookies' => true,
+]);
 
-$host_db = "localhost";
-$user_db = "root";
-$pass_db = "";
-$nama_db = "crud";
+require  'config_koneksi.php';
+
+$host_db        = DB_HOST;
+$user_db        = DB_USER;
+$pass_db        = DB_PASS;
+$nama_db        = DB_NAME;
 $koneksi = mysqli_connect($host_db, $user_db, $pass_db, $nama_db);
 
 $err = "";
 $email = "";
 
-// Periksa apakah 'session_email' dan 'session_role' sudah di-set
+
 if (isset($_SESSION['session_email']) && isset($_SESSION['session_role'])) {
     $allowedRole = $_SESSION['session_role'];
 
@@ -73,9 +79,7 @@ function input($data)
     $data = htmlspecialchars($data);
     return $data;
 }
-
 $bidang = '';
-
 // Cek apakah ada kiriman form dari method post
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nama = input($_POST["nama"]);
@@ -94,11 +98,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         return null;
     }
     $err = [
-        validateMaxLength($nama, 255, 'Nama'),
-        validateMaxLength($sekolah, 255, 'Sekolah'),
-        validateMaxLength($jurusan, 255, 'Jurusan'),
+        validateMaxLength($nama, 50, 'Nama'),
+        validateMaxLength($sekolah, 50, 'Sekolah'),
+        validateMaxLength($jurusan, 50, 'Jurusan'),
         validateMaxLength($no_hp, 15, 'Nomor Telepon'),
-        validateMaxLength($alamat, 255, 'Alamat')
+        validateMaxLength($alamat, 50, 'Alamat')
     ];
 
     // Hapus elemen array yang bernilai null (valid)
@@ -134,8 +138,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -235,6 +237,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 }).then(() => {
                                     // Lakukan tindakan lain jika perlu, seperti membersihkan formulir
                                     document.getElementById("myForm").reset();
+                                    window.location.href = '../../infinite_loop/php/homepage.php';
                                 });
                             } else {
                                 // Menampilkan notifikasi gagal menggunakan SweetAlert2

@@ -1,10 +1,15 @@
 <?php
-session_start();
+session_start([
+  'cookie_secure' => true,
+  'cookie_httponly' => true,
+  'use_only_cookies' => true,
+]);
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 require __DIR__ . '/../../../nonpublic/vendor/autoload.php';
+require 'config_homepage.php';
 
 $emailSudahTerdaftar = false;
 
@@ -13,21 +18,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $email = htmlspecialchars($_POST['email']);
   $message = htmlspecialchars($_POST['message']);
 
-  // Kirim email jika email belum terdaftar
+  // Menggunakan nilai konfigurasi
   $mail = new PHPMailer(true);
   try {
-    // Pengaturan server SMTP Gmail
     $mail->isSMTP();
-    $mail->Host = 'smtp.gmail.com';
+    $mail->Host = SMTP_HOST;
     $mail->SMTPAuth = true;
-    $mail->Username = 'ardiansyah3151@gmail.com';
-    $mail->Password = 'riiknwzqbhudrhtm'; // Ganti dengan kata sandi Gmail Anda
+    $mail->Username = SMTP_USERNAME;
+    $mail->Password = SMTP_PASSWORD;
     $mail->SMTPSecure = 'ssl';
-    $mail->Port = 465;
+    $mail->Port = SMTP_PORT;
 
     // Pengaturan email
-    $mail->setFrom($email, $name);
-    $mail->addAddress('ardiansyah3151@gmail.com'); // Alamat email tujuan (dalam hal ini, email Anda sendiri)
+    $mail->setFrom(MAIL_FROM, $name);
+    $mail->addAddress(MAIL_TO); // Alamat email tujuan (dalam hal ini, email Anda sendiri)
     $mail->Subject = 'New Contact Form Submission';
     $mail->Body = "Name: $name\nEmail: $email\nMessage: $message";
     // Kirim email
@@ -39,8 +43,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 // Cek apakah pengguna sudah login
-if (!isset($_SESSION['session_username'])) {
-  header("location: ../../crud/php/login.php");
+if (!isset($_SESSION['session_email'])) {
+  header("location: login_bc.php");
   exit();
 }
 $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
@@ -102,13 +106,16 @@ function isEmailRegistered($email)
             <li class="nav-item">
               <a class="nav-link tm-nav-link" href="#contact">Kontak Kami</a>
             </li>
-            <li class="nav-item">
-              <?php
-              // Cek apakah pengguna sudah login
-              if (!isset($_SESSION['session_email'])) {
-                echo '<a class="nav-link tm-nav-link" href="login_bc.php">Login</a>';
-              }
-              ?>
+            <?php if (isset($_SESSION['session_email'])) : ?>
+              <li class="nav-item">
+                <a class="nav-link tm-nav-link" href="profile_page.php">Profile</a>
+              </li>
+            <?php endif; ?>
+            <?php
+            if (!isset($_SESSION['session_email'])) {
+              echo '<a class="nav-link tm-nav-link" href="login_bc.php">Login</a>';
+            }
+            ?>
             </li>
             <?php if ($userRole == 'admin') { ?>
               <li class="nav-item">
@@ -117,9 +124,9 @@ function isEmailRegistered($email)
             <?php } ?>
             </li>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a class="nav-link tm-nav-link" href="#logout" id="logoutLink">Logout</a>
-            </li>
+            </li> -->
           </ul>
         </div>
       </div>
@@ -601,32 +608,6 @@ function isEmailRegistered($email)
           ]
         });
       });
-    </script>
-    <script>
-      // Tambahkan script JavaScript untuk menangani logout saat tombol Logout diklik
-      document.getElementById('logoutLink').addEventListener('click', function(event) {
-        event.preventDefault(); // Menghentikan aksi default dari link
-        logout(); // Panggil fungsi logout
-      });
-
-      function logout() {
-        // Lakukan logout melalui AJAX atau langsung mengarahkan ke halaman logout PHP
-        // Saya akan menunjukkan contoh menggunakan AJAX
-        // Pastikan untuk memasukkan library jQuery jika belum ada
-
-        $.ajax({
-          type: "POST",
-          url: "../../crud/php/logout.php", // Gantilah dengan URL yang sesuai
-          success: function(response) {
-            // Redirect ke halaman login setelah logout
-            window.location.href = "../../crud/php/login.php";
-          },
-          error: function(error) {
-            console.error("Error during logout:", error);
-            // Handle error jika diperlukan
-          }
-        });
-      }
     </script>
     <script>
       document.getElementById('contactForm').addEventListener('submit', function(e) {

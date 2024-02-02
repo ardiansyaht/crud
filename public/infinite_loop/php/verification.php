@@ -1,16 +1,21 @@
 <?php
-session_start();
+session_start([
+    'cookie_secure' => true,
+    'cookie_httponly' => true,
+    'use_only_cookies' => true,
+]);
 require __DIR__ . '/../../../nonpublic/vendor/autoload.php';
+require 'config_verification.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-$host_db        = "localhost";
-$user_db        = "root";
-$pass_db        = "";
-$nama_db        = "crud";
+$host_db = DB_HOST;
+$user_db = DB_USER;
+$pass_db = DB_PASS;
+$nama_db = DB_NAME;
 $tabel_pengguna = "tb_login_bc";
-$koneksi        = mysqli_connect($host_db, $user_db, $pass_db, $nama_db);
+$koneksi = mysqli_connect($host_db, $user_db, $pass_db, $nama_db);
 
 $error_message = "";
 $success_message = "";
@@ -23,15 +28,21 @@ if (isset($_POST['resend_code'])) {
         $error_message = "Email is empty";
     } else {
         // Pengecekan apakah email ada di database
-        $sqlCheckEmailExist = "SELECT * FROM $tabel_pengguna WHERE email = '$email_resend'";
-        $resultCheckEmailExist = mysqli_query($koneksi, $sqlCheckEmailExist);
+        $sqlCheckEmailExist = "SELECT * FROM $tabel_pengguna WHERE email = ?";
+        $stmtCheckEmailExist = mysqli_prepare($koneksi, $sqlCheckEmailExist);
+        mysqli_stmt_bind_param($stmtCheckEmailExist, "s", $email_resend);
+        mysqli_stmt_execute($stmtCheckEmailExist);
+        $resultCheckEmailExist = mysqli_stmt_get_result($stmtCheckEmailExist);
 
         if (!$resultCheckEmailExist || mysqli_num_rows($resultCheckEmailExist) === 0) {
             $error_message = "Email tidak terdaftar di sistem kami.";
         } else {
             // Pengecekan apakah pengguna sudah terverifikasi sebelumnya
-            $sqlCheckUserVerified = "SELECT * FROM $tabel_pengguna WHERE email = '$email_resend' AND status = 'verified'";
-            $resultCheckUserVerified = mysqli_query($koneksi, $sqlCheckUserVerified);
+            $sqlCheckUserVerified = "SELECT * FROM $tabel_pengguna WHERE email = ? AND status = 'verified'";
+            $stmtCheckUserVerified = mysqli_prepare($koneksi, $sqlCheckUserVerified);
+            mysqli_stmt_bind_param($stmtCheckUserVerified, "s", $email_resend);
+            mysqli_stmt_execute($stmtCheckUserVerified);
+            $resultCheckUserVerified = mysqli_stmt_get_result($stmtCheckUserVerified);
 
             if ($resultCheckUserVerified && mysqli_num_rows($resultCheckUserVerified) > 0) {
                 $error_message = "Email sudah terverifikasi sebelumnya.";
@@ -66,8 +77,10 @@ if (isset($_POST['resend_code'])) {
                     $mail->send();
 
                     // Perbarui informasi sesi verifikasi di tabel pengguna
-                    $sqlUpdateVerification = "UPDATE $tabel_pengguna SET otp_code = '$otp_code', otp_expiration = '$expiration_time' WHERE email = '$email_resend'";
-                    mysqli_query($koneksi, $sqlUpdateVerification);
+                    $sqlUpdateVerification = "UPDATE $tabel_pengguna SET otp_code = ?, otp_expiration = ? WHERE email = ?";
+                    $stmtUpdateVerification = mysqli_prepare($koneksi, $sqlUpdateVerification);
+                    mysqli_stmt_bind_param($stmtUpdateVerification, "sss", $otp_code, $expiration_time, $email_resend);
+                    mysqli_stmt_execute($stmtUpdateVerification);
 
                     // Set email ke dalam sesi
                     $_SESSION['email'] = $email_resend;
@@ -100,29 +113,39 @@ if (isset($_POST['verify'])) {
         $error_message = "Kode OTP harus terdiri dari 6 angka.";
     } else {
         // Pengecekan apakah email ada di database
-        $sqlCheckEmailExist = "SELECT * FROM $tabel_pengguna WHERE email = '$email'";
-        $resultCheckEmailExist = mysqli_query($koneksi, $sqlCheckEmailExist);
+        $sqlCheckEmailExist = "SELECT * FROM $tabel_pengguna WHERE email = ?";
+        $stmtCheckEmailExist = mysqli_prepare($koneksi, $sqlCheckEmailExist);
+        mysqli_stmt_bind_param($stmtCheckEmailExist, "s", $email);
+        mysqli_stmt_execute($stmtCheckEmailExist);
+        $resultCheckEmailExist = mysqli_stmt_get_result($stmtCheckEmailExist);
 
         if (!$resultCheckEmailExist || mysqli_num_rows($resultCheckEmailExist) === 0) {
             $error_message = "Email tidak terdaftar di sistem kami.";
         } else {
             // Pengecekan apakah pengguna sudah terverifikasi sebelumnya
-            $sqlCheckUserVerified = "SELECT * FROM $tabel_pengguna WHERE email = '$email' AND status = 'verified'";
-            $resultCheckUserVerified = mysqli_query($koneksi, $sqlCheckUserVerified);
+            $sqlCheckUserVerified = "SELECT * FROM $tabel_pengguna WHERE email = ? AND status = 'verified'";
+            $stmtCheckUserVerified = mysqli_prepare($koneksi, $sqlCheckUserVerified);
+            mysqli_stmt_bind_param($stmtCheckUserVerified, "s", $email);
+            mysqli_stmt_execute($stmtCheckUserVerified);
+            $resultCheckUserVerified = mysqli_stmt_get_result($stmtCheckUserVerified);
 
             if ($resultCheckUserVerified && mysqli_num_rows($resultCheckUserVerified) > 0) {
                 // Pengguna sudah diverifikasi sebelumnya
                 $error_message = "Email sudah diverifikasi sebelumnya.";
             } else {
-                $sqlCheckOTP = "SELECT * FROM $tabel_pengguna WHERE email = '$email' AND otp_code = '$otp_code' AND otp_expiration > NOW()";
-
-                $resultCheckOTP = mysqli_query($koneksi, $sqlCheckOTP);
+                $sqlCheckOTP = "SELECT * FROM $tabel_pengguna WHERE email = ? AND otp_code = ? AND otp_expiration > NOW()";
+                $stmtCheckOTP = mysqli_prepare($koneksi, $sqlCheckOTP);
+                mysqli_stmt_bind_param($stmtCheckOTP, "ss", $email, $otp_code);
+                mysqli_stmt_execute($stmtCheckOTP);
+                $resultCheckOTP = mysqli_stmt_get_result($stmtCheckOTP);
 
                 if ($resultCheckOTP && mysqli_num_rows($resultCheckOTP) > 0) {
-                    $sqlUpdateVerificationStatus = "UPDATE $tabel_pengguna SET status = 'verified' WHERE email = '$email'";
-                    $resultUpdateVerificationStatus = mysqli_query($koneksi, $sqlUpdateVerificationStatus);
+                    $sqlUpdateVerificationStatus = "UPDATE $tabel_pengguna SET status = 'verified' WHERE email = ?";
+                    $stmtUpdateVerificationStatus = mysqli_prepare($koneksi, $sqlUpdateVerificationStatus);
+                    mysqli_stmt_bind_param($stmtUpdateVerificationStatus, "s", $email);
+                    mysqli_stmt_execute($stmtUpdateVerificationStatus);
 
-                    if ($resultUpdateVerificationStatus) {
+                    if ($stmtUpdateVerificationStatus) {
                         // Redirect ke halaman login jika verifikasi berhasil
                         header("location: login_bc.php");
                         exit();
@@ -140,9 +163,9 @@ if (isset($_POST['verify'])) {
     $otp_code = $email = "";
 }
 
-
-
+// ... (Bagian code yang lain tetap sama)
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 

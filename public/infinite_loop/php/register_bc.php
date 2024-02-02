@@ -1,49 +1,53 @@
 <?php
 session_start();
 require __DIR__ . '/../../../nonpublic/vendor/autoload.php';
+require 'config_register.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-$host_db        = "localhost";
-$user_db        = "root";
-$pass_db        = "";
-$nama_db        = "crud";
+$host_db        = DB_HOST;
+$user_db        = DB_USER;
+$pass_db        = DB_PASS;
+$nama_db        = DB_NAME;
 $tabel_pengguna = "tb_login_bc";
 $koneksi        = mysqli_connect($host_db, $user_db, $pass_db, $nama_db);
 
 $success_msg      = "";
 $err              = "";
+$username         = "";
 $phone_number     = "";
 $email            = "";
 $newPassword      = "";
 $confirmPassword  = "";
-$auto_username    = isset($_SESSION['auto_username']) ? $_SESSION['auto_username'] : "";
 
 function deleteUnverifiedAccounts($koneksi)
 {
     $current_time = date('Y-m-d H:i:s');
     date_default_timezone_set('Asia/Jakarta');
     $two_minutes_ago = date('Y-m-d H:i:s', strtotime('-1 hour'));
-    $sql = "DELETE FROM tb_login_bc WHERE status = 'notverified' AND registration_time < '$two_minutes_ago'";
-    mysqli_query($koneksi, $sql);
+    $sql = "DELETE FROM tb_login_bc WHERE status = 'notverified' AND registration_time < ?";
+    $stmt = mysqli_prepare($koneksi, $sql);
+    mysqli_stmt_bind_param($stmt, "s", $two_minutes_ago);
+    mysqli_stmt_execute($stmt);
 }
 
 if (isset($_POST['register'])) {
-    $auto_username = $_SESSION['auto_username'];
+    $username = $_POST['username'];
     $phone_number = $_POST['phone_number'];
     $email = $_POST['email'];
     $newPassword = $_POST['new_password'];
     $confirmPassword = $_POST['confirm_password'];
 
     // Validasi form di sisi klien
-    if (empty($auto_username) || empty($phone_number) || empty($email) || empty($newPassword) || empty($confirmPassword)) {
+    if (empty($username) || empty($phone_number) || empty($email) || empty($newPassword) || empty($confirmPassword)) {
         $err .= "<li>Silakan lengkapi semua kolom.</li>";
-    } elseif (strlen($newPassword) < 5) {
-        $err .= "<li>Kata sandi harus terdiri dari minimal 5 karakter.</li>";
+    } elseif (strlen($newPassword) < 8 || !preg_match('/[a-z]/', $newPassword) || !preg_match('/[A-Z]/', $newPassword) || !preg_match('/[0-9]/', $newPassword) || !preg_match('/[!@#$%^&*()_+]/', $newPassword)) {
+        $err .= "<li>Kata sandi harus memenuhi persyaratan: minimal 8 karakter, 1 huruf kecil, 1 huruf besar, 1 angka, dan 1 simbol.</li>";
     } elseif ($newPassword !== $confirmPassword) {
         $err .= "<li>Konfirmasi kata sandi tidak cocok.</li>";
     } else {
+
         $recaptchaSecretKey = "6LceCFspAAAAAOiZ7XgAOMgIboFKgD0vsXwQb7Dn"; // Ganti dengan secret key reCAPTCHA Anda
         $recaptchaResponse = $_POST['g-recaptcha-response'];
 
@@ -54,8 +58,11 @@ if (isset($_POST['register'])) {
             $err .= "<li>Validasi reCAPTCHA gagal. Silakan coba lagi.</li>";
         } else {
             // Validasi form di sisi server
-            $sqlCheckUser = "SELECT * FROM $tabel_pengguna WHERE auto_username = '$auto_username' OR email = '$email'";
-            $resultCheckUser = mysqli_query($koneksi, $sqlCheckUser);
+            $sqlCheckUser = "SELECT * FROM $tabel_pengguna WHERE username = ? OR email = ?";
+            $stmtCheckUser = mysqli_prepare($koneksi, $sqlCheckUser);
+            mysqli_stmt_bind_param($stmtCheckUser, "ss", $username, $email);
+            mysqli_stmt_execute($stmtCheckUser);
+            $resultCheckUser = mysqli_stmt_get_result($stmtCheckUser);
 
             if (mysqli_num_rows($resultCheckUser) > 0) {
                 $err .= "<li>Username atau email sudah digunakan.</li>";
@@ -67,8 +74,10 @@ if (isset($_POST['register'])) {
                 $expiration_time = date('Y-m-d H:i:s', strtotime('+2 minutes')); // Waktu kedaluwarsa dalam contoh adalah 2 menit
                 $registration_time = date('Y-m-d H:i:s'); // Tidak ada penambahan waktu di sini
 
-                $sqlInsertUser = "INSERT INTO $tabel_pengguna (auto_username, phone_number, email, password, otp_code, otp_expiration, status, registration_time) VALUES ('$auto_username', '$phone_number', '$email', '$hashedPassword', '$otp_code', '$expiration_time', 'notverified', '$registration_time')";
-                $resultInsertUser = mysqli_query($koneksi, $sqlInsertUser);
+                $sqlInsertUser = "INSERT INTO $tabel_pengguna (username, phone_number, email, password, otp_code, otp_expiration, status, registration_time) VALUES (?, ?, ?, ?, ?, ?, 'notverified', ?)";
+                $stmtInsertUser = mysqli_prepare($koneksi, $sqlInsertUser);
+                mysqli_stmt_bind_param($stmtInsertUser, "sssssss", $username, $phone_number, $email, $hashedPassword, $otp_code, $expiration_time, $registration_time);
+                $resultInsertUser = mysqli_stmt_execute($stmtInsertUser);
 
                 if ($resultInsertUser) {
                     // Kode OTP
@@ -80,16 +89,16 @@ if (isset($_POST['register'])) {
                     try {
                         // Pengaturan server SMTP Gmail
                         $mail->isSMTP();
-                        $mail->Host = 'smtp.gmail.com';
+                        $mail->Host = SMTP_HOST;
                         $mail->SMTPAuth = true;
-                        $mail->Username = 'ardiansyah3151@gmail.com'; // Ganti dengan alamat email Gmail Anda
-                        $mail->Password = 'japojvauiitefutx'; // Ganti dengan kata sandi Gmail Anda
+                        $mail->Username = SMTP_USERNAME;
+                        $mail->Password = SMTP_PASSWORD;
                         $mail->SMTPSecure = 'ssl';
-                        $mail->Port = 465;
+                        $mail->Port = SMTP_PORT;
 
                         // Pengaturan email
-                        $mail->setFrom('ardiansyah3151@gmail.com', 'TechForge Academy'); // Ganti dengan alamat email dan nama Anda
-                        $mail->addAddress($email); // Alamat email pengguna
+                        $mail->setFrom(MAIL_FROM, 'TechForge Academy');
+                        $mail->addAddress($email);
                         $mail->Subject = 'Code Verification';
                         $mail->Body = "Kode verifikasi Anda: $otp_code  Code OTP akan kadaluarsa dalam 2 menit";
 
@@ -97,14 +106,15 @@ if (isset($_POST['register'])) {
                         $mail->send();
 
                         // Perbarui informasi sesi verifikasi di tabel pengguna
-                        $sqlUpdateVerification = "UPDATE $tabel_pengguna SET otp_code = '$otp_code', otp_expiration = '$expiration_time' WHERE email = '$email'";
-                        mysqli_query($koneksi, $sqlUpdateVerification);
+                        $sqlUpdateVerification = "UPDATE $tabel_pengguna SET otp_code = ?, otp_expiration = ? WHERE email = ?";
+                        $stmtUpdateVerification = mysqli_prepare($koneksi, $sqlUpdateVerification);
+                        mysqli_stmt_bind_param($stmtUpdateVerification, "sss", $otp_code, $expiration_time, $email);
+                        mysqli_stmt_execute($stmtUpdateVerification);
 
                         // Set email ke dalam sesi
                         $_SESSION['email'] = $email;
 
                         $success_msg = "Akun berhasil dibuat. Silakan cek email Anda untuk kode verifikasi.";
-
                         // Kosongkan field setelah berhasil mendaftar
                         header("location: verification.php");
                         exit();
@@ -119,12 +129,11 @@ if (isset($_POST['register'])) {
     }
 }
 
-
-// Cek apakah pengguna sudah login
-if (!isset($_SESSION['session_username'])) {
-    header("location: ../../crud/php/login.php");
-    exit();
-}
+// // Cek apakah pengguna sudah login
+// if (!isset($_SESSION['session_username'])) {
+//     header("location: ../../crud/php/login.php");
+//     exit();
+// }
 $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
 ?>
 <!DOCTYPE html>
@@ -158,7 +167,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
 
                 <div class="form-holder">
                     <span class="lnr lnr-user"></span>
-                    <input type="text" class="form-control" name="new_username" placeholder="Username" value="<?php echo htmlspecialchars($auto_username); ?>" readonly>
+                    <input type="text" class="form-control" name="username" placeholder="Username" value="<?php echo htmlspecialchars($username); ?>">
                 </div>
                 <div class="form-holder">
                     <span class="lnr lnr-phone-handset"></span>

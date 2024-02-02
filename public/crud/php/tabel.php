@@ -17,35 +17,36 @@
         </h4>
 
         <?php
-
+        // Include the PDO connection
         include "koneksi.php";
-        if (!isset($_SESSION['session_username'])) {
-            header("location: login.php");
-            exit();
-        }
+
         if ($_SESSION['session_role'] !== 'admin') {
-            // Redirect atau lakukan sesuatu jika peran bukan "admin"
-            // Contoh: redirect ke halaman tertentu atau tampilkan pesan error
-            header("location: unauthorized.php");
+            // Redirect or do something if the role is not "admin"
+            header("location: ../../../unauthorized.php");
             exit();
         }
 
-        //Cek apakah ada kiriman form dari method post
+        // Check if there is a form submission via the GET method
         if (isset($_GET['id_peserta'])) {
             $id_peserta = htmlspecialchars($_GET["id_peserta"]);
-            $sql = "DELETE FROM peserta WHERE id_peserta='$id_peserta'";
-            $hasil = mysqli_query($kon, $sql);
+            $sql = "DELETE FROM peserta WHERE id_peserta = :id_peserta";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':id_peserta', $id_peserta, PDO::PARAM_INT);
+            $stmt->execute();
         }
 
-        // Pemrosesan Pencarian
+        // Processing Search
         if (isset($_GET['search'])) {
-            $keyword = mysqli_real_escape_string($kon, $_GET['search']);
-            $sql = "SELECT * FROM peserta WHERE nama LIKE '%$keyword%' ORDER BY id_peserta DESC";
+            $keyword = '%' . $_GET['search'] . '%';
+            $sql = "SELECT * FROM peserta WHERE nama LIKE :keyword ORDER BY id_peserta DESC";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':keyword', $keyword, PDO::PARAM_STR);
         } else {
             $sql = "SELECT * FROM peserta ORDER BY id_peserta DESC";
+            $stmt = $pdo->query($sql);
         }
 
-        $hasil = mysqli_query($kon, $sql);
+        $stmt->execute();
         $no = 0;
         ?>
 
@@ -64,7 +65,7 @@
                 </tr>
             </thead>
             <?php
-            while ($data = mysqli_fetch_array($hasil)) {
+            while ($data = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $no++;
             ?>
                 <tbody>
@@ -87,7 +88,8 @@
             }
             ?>
         </table>
-        <!-- <a href="create.php" class="btn btn-primary" role="button">Tambah Data</a> -->
+        <?php include "barchart.php"; ?>
+
         <a href="generate_pdf.php" class="btn btn-danger" role="button">Download PDF</a>
         <a href="generate_excel.php" class="btn btn-success" role="button">Download Excel</a>
     </div>

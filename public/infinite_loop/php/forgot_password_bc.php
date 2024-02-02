@@ -1,14 +1,19 @@
 <?php
-session_start();
+session_start([
+    'cookie_secure' => true,
+    'cookie_httponly' => true,
+    'use_only_cookies' => true,
+]);
 require __DIR__ . '/../../../nonpublic/vendor/autoload.php';
+require 'config_forgot.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-$host_db        = "localhost";
-$user_db        = "root";
-$pass_db        = "";
-$nama_db        = "crud";
+$host_db        = DB_HOST;
+$user_db        = DB_USER;
+$pass_db        = DB_PASS;
+$nama_db        = DB_NAME;
 $tabel_pengguna = "tb_login_bc";
 $koneksi        = mysqli_connect($host_db, $user_db, $pass_db, $nama_db);
 
@@ -25,23 +30,23 @@ if (isset($_POST['forgot_password'])) {
         mysqli_query($koneksi, $sqlUpdateToken);
 
         // Kirim email reset password menggunakan PHPMailer
-        $resetLink = "http://localhost/web-1/public/infinite_loop/php/reset_password_bc.php?token=$resetToken&email=$email";
+        $resetLink = "http://localhost/web-1/project-2/public/infinite_loop/php/reset_password_bc.php?token=$resetToken&email=$email";
 
         $mail = new PHPMailer(true);
 
         try {
             // Pengaturan server SMTP Gmail
             $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';
+            $mail->Host = SMTP_HOST;
             $mail->SMTPAuth = true;
-            $mail->Username = 'ardiansyah3151@gmail.com'; // Ganti dengan alamat email Gmail Anda
-            $mail->Password = 'piatkorcdqlkieds'; // Ganti dengan kata sandi Gmail Anda
+            $mail->Username = SMTP_USERNAME;
+            $mail->Password = SMTP_PASSWORD;
             $mail->SMTPSecure = 'ssl';
-            $mail->Port = 465;
+            $mail->Port = SMTP_PORT;
 
             // Pengaturan email
-            $mail->setFrom('ardiansyah3151@gmail.com', 'bang al'); // Ganti dengan alamat email dan nama Anda
-            $mail->addAddress($email); // Alamat email pengguna
+            $mail->setFrom(MAIL_FROM, 'bang al');
+            $mail->addAddress($email);
             $mail->Subject = 'Reset Your Password';
             $mail->Body = "Click the following link to reset your password: $resetLink";
 

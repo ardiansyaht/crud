@@ -31,14 +31,14 @@ $sheet->setCellValue('F1', 'Alamat');
 $sheet->setCellValue('G1', 'Email');
 $sheet->setCellValue('H1', 'Bidang');
 
-
 // Data peserta
 $sql = "SELECT * FROM peserta";
-$result = mysqli_query($kon, $sql);
+$stmt = $pdo->prepare($sql);
+$stmt->execute();
 $no = 0;
 $row = 2;
 
-while ($data = mysqli_fetch_array($result)) {
+while ($data = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $no++;
     $sheet->setCellValue('A' . $row, $no);
     $sheet->setCellValue('B' . $row, $data['nama']);

@@ -16,7 +16,7 @@ if ($_SESSION['session_role'] !== 'admin') {
 $pdf = new TCPDF();
 
 // Set dokumen PDF
-$pdf->SetAuthor('TechForge Academey');
+$pdf->SetAuthor('TechForge Academy');
 $pdf->SetTitle('Daftar Peserta Pelatihan');
 
 // Tambahkan halaman
@@ -29,10 +29,10 @@ $content .= '<thead><tr><th>No</th><th>Nama</th><th>Sekolah</th><th>Jurusan</th>
 $content .= '<tbody>';
 
 $sql = "SELECT * FROM peserta";
-$result = mysqli_query($kon, $sql);
+$stmt = $pdo->query($sql);
 $no = 0;
 
-while ($data = mysqli_fetch_array($result)) {
+while ($data = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $no++;
     $content .= "<tr>";
     $content .= "<td>{$no}</td>";
@@ -40,10 +40,9 @@ while ($data = mysqli_fetch_array($result)) {
     $content .= "<td>{$data['sekolah']}</td>";
     $content .= "<td>{$data['jurusan']}</td>";
     $content .= "<td>{$data['no_hp']}</td>";
-    $content .= "<td>{$data['alamat']}</td>";
     $content .= "<td>{$data['email']}</td>"; // Tambahkan kolom Email
     $content .= "<td>{$data['bidang']}</td>"; // Tambahkan kolom Bidang
-
+    $content .= "<td>{$data['alamat']}</td>";
     $content .= "</tr>";
 }
 

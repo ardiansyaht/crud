@@ -1,10 +1,15 @@
 <?php
-session_start();
+session_start([
+    'cookie_secure' => true,
+    'cookie_httponly' => true,
+    'use_only_cookies' => true,
+]);
 
-$host_db        = "localhost";
-$user_db        = "root";
-$pass_db        = "";
-$nama_db        = "crud";
+require  '../../crud/php/config_koneksi.php';
+$host_db        = DB_HOST;
+$user_db        = DB_USER;
+$pass_db        = DB_PASS;
+$nama_db        = DB_NAME;
 $koneksi        = mysqli_connect($host_db, $user_db, $pass_db, $nama_db);
 
 $err            = "";
@@ -26,7 +31,7 @@ function updateFailedLoginAttempts($email, $koneksi, $attempts)
     mysqli_query($koneksi, $sql);
 }
 
-// Fungsi untuk menghapus akun yang belum diverifikasi dalam waktu 2 menit
+// Fungsi untuk menghapus akun yang belum diverifikasi dalam waktu 1 jam
 function deleteUnverifiedAccounts($koneksi)
 {
     $sqlDeleteUnverified = "DELETE FROM tb_login_bc WHERE status = 'notverified' AND registration_time < NOW() - INTERVAL 1 HOUR";
@@ -35,6 +40,14 @@ function deleteUnverifiedAccounts($koneksi)
 
 // Panggil fungsi penghapusan otomatis
 deleteUnverifiedAccounts($koneksi);
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['logout'])) {
+    // Logout user
+    session_unset();
+    session_destroy();
+    header("location: login_bc.php");
+    exit();
+}
 
 if (isset($_POST['login'])) {
     $email    = $_POST['email'];
@@ -88,16 +101,17 @@ if (isset($_POST['login'])) {
 
             $_SESSION['session_email'] = $email;
             $_SESSION['session_role'] = $r1['role'];
+            $_SESSION['username'] = $r1['username'];
 
             header("location:homepage.php");
             exit();
         }
     }
 }
-if (!isset($_SESSION['session_username'])) {
-    header("location: ../../crud/php/login.php");
-    exit();
-}
+// if (!isset($_SESSION['session_username'])) {
+//     header("location: ../../crud/php/login.php");
+//     exit();
+// }
 $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
 ?>
 
@@ -105,20 +119,6 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
 <html>
 
 <head>
-    <script>
-        function togglePassword() {
-            var passwordField = document.getElementById("password");
-            var toggleIcon = document.getElementById("toggleIcon");
-
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                toggleIcon.className = "lnr lnr-eye";
-            } else {
-                passwordField.type = "password";
-                toggleIcon.className = "lnr lnr-eye-off";
-            }
-        }
-    </script>
     <meta charset="utf-8">
     <title>Bootcamp</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

@@ -1,17 +1,15 @@
 <?php
-session_start();
-
-// Cek apakah pengguna sudah login
-if (!isset($_SESSION['session_username'])) {
-    header("location: login.php");
-    exit();
-}
+session_start([
+    'cookie_secure' => true,
+    'cookie_httponly' => true,
+    'use_only_cookies' => true,
+]);
 
 // Cek apakah peran pengguna adalah "admin"
 if ($_SESSION['session_role'] !== 'admin') {
     // Redirect atau lakukan sesuatu jika peran bukan "admin"
     // Contoh: redirect ke halaman tertentu atau tampilkan pesan error
-    header("location: unauthorized.php");
+    header("location: ../../../unauthorized.php");
     exit();
 }
 ?>
@@ -113,13 +111,14 @@ if ($_SESSION['session_role'] !== 'admin') {
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Dashboard</h1>
+                    <!-- <h1 class="mt-4">Dashboard</h1> -->
                     <ol class="breadcrumb mb-4">
                         <li class="breadcrumb-item active">Dashboard</li>
                     </ol>
 
                     <!-- Bagian Daftar Peserta Pelatihan -->
                     <?php include "tabel.php"; ?>
+
 
                 </div>
             </main>
