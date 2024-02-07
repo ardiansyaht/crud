@@ -119,69 +119,67 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $company = mysqli_real_escape_string($koneksi, $_POST["company"]);
         $username = mysqli_real_escape_string($koneksi, $_POST["username"]);
 
-        if (!empty($name) && !empty($company) && !empty($username)) {
-            $updateQuery = "UPDATE tb_login_bc SET name=?, company=?, username=? WHERE email=?";
-            $stmt = mysqli_prepare($koneksi, $updateQuery);
-            mysqli_stmt_bind_param($stmt, "ssss", $name, $company, $username, $email);
+        $updateQuery = "UPDATE tb_login_bc SET name=?, company=?, username=? WHERE email=?";
+        $stmt = mysqli_prepare($koneksi, $updateQuery);
+        mysqli_stmt_bind_param($stmt, "ssss", $name, $company, $username, $email);
 
-            $resultUpdate = mysqli_stmt_execute($stmt);
+        $resultUpdate = mysqli_stmt_execute($stmt);
 
-            if ($resultUpdate) {
-                // Profile updated successfully.
+        if ($resultUpdate) {
+            // Profile updated successfully.
 
-                // Check if a file is uploaded
-                if (!empty($_FILES['profile_photo']['name'])) {
-                    $targetDirectory = "user_image/";
-                    $originalFileName = basename($_FILES['profile_photo']['name']);
-                    $targetFile = $targetDirectory . generateUniqueFileName($originalFileName);
-                    $uploadOk = 1;
-                    $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+            // Check if a file is uploaded
+            if (!empty($_FILES['profile_photo']['name'])) {
+                $targetDirectory = "user_image/";
+                $originalFileName = basename($_FILES['profile_photo']['name']);
+                $targetFile = $targetDirectory . generateUniqueFileName($originalFileName);
+                $uploadOk = 1;
+                $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
 
-                    // Check file size
-                    if ($_FILES['profile_photo']['size'] > 10000000) {
-                        $_SESSION['notification'] = "Sorry, the maximum file size allowed is 10MB.";
-                        $uploadOk = 0;
-                    }
+                // Check file size
+                if ($_FILES['profile_photo']['size'] > 10000000) {
+                    $_SESSION['notification'] = "Sorry, the maximum file size allowed is 10MB.";
+                    $uploadOk = 0;
+                }
 
-                    // Allow certain file formats
-                    if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
-                        $_SESSION['notification'] = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-                        $uploadOk = 0;
-                    }
+                // Allow certain file formats
+                if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+                    $_SESSION['notification'] = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+                    $uploadOk = 0;
+                }
 
-                    // Check if $uploadOk is set to 0 by an error
-                    if ($uploadOk == 0) {
-                        $_SESSION['notification'] = "Sorry, your file was not uploaded.";
+                // Check if $uploadOk is set to 0 by an error
+                if ($uploadOk == 0) {
+                    $_SESSION['notification'] = "Sorry, your file was not uploaded.";
+                } else {
+                    // if everything is ok, try to upload file
+                    if (move_uploaded_file($_FILES['profile_photo']['tmp_name'], $targetFile)) {
+                        // Gambar berhasil diunggah
+                        // $_SESSION['notification'] = "Profile photo uploaded successfully.";
+
+                        // Update database with file path   
+                        $photoPath = $targetFile;
+                        $photoUpdateQuery = "UPDATE tb_login_bc SET photo_path=? WHERE email=?";
+                        $photoStmt = mysqli_prepare($koneksi, $photoUpdateQuery);
+                        mysqli_stmt_bind_param($photoStmt, "ss", $photoPath, $email);
+                        mysqli_stmt_execute($photoStmt);
+                        mysqli_stmt_close($photoStmt);
                     } else {
-                        // if everything is ok, try to upload file
-                        if (move_uploaded_file($_FILES['profile_photo']['tmp_name'], $targetFile)) {
-                            // Gambar berhasil diunggah
-                            // $_SESSION['notification'] = "Profile photo uploaded successfully.";
-
-                            // Update database with file path
-                            $photoPath = $targetFile;
-                            $photoUpdateQuery = "UPDATE tb_login_bc SET photo_path=? WHERE email=?";
-                            $photoStmt = mysqli_prepare($koneksi, $photoUpdateQuery);
-                            mysqli_stmt_bind_param($photoStmt, "ss", $photoPath, $email);
-                            mysqli_stmt_execute($photoStmt);
-                            mysqli_stmt_close($photoStmt);
-
-                            // Redirect back to the same page
-                            header("Location: " . $_SERVER['PHP_SELF']);
-                            exit();
-                        } else {
-                            $_SESSION['notification'] = "Sorry, there was an error uploading your file.";
-                        }
+                        $_SESSION['notification'] = "Sorry, there was an error uploading your file.";
                     }
                 }
-            } else {
-                $_SESSION['notification'] = "Failed to update profile. Please try again.";
             }
 
-            mysqli_stmt_close($stmt);
+            $_SESSION['notification'] = "Profile updated successfully.";
         } else {
-            $_SESSION['notification'] = "Please fill in all data fields.";
+            $_SESSION['notification'] = "Failed to update profile. Please try again.";
         }
+
+        mysqli_stmt_close($stmt);
+
+        // Redirect back to the same page
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
     } elseif (isset($_POST["reset_photo"])) {
         // Handle reset button click
         $resetPhotoQuery = "UPDATE tb_login_bc SET photo_path=NULL WHERE email=?";
@@ -217,6 +215,7 @@ function generateUniqueFileName($originalFileName)
 </head>
 
 <body>
+    <!-- Konten Profil -->
     <div class="container light-style flex-grow-1 container-p-y">
         <h4 class="font-weight-bold py-3 mb-4">
             Account settings
@@ -224,17 +223,29 @@ function generateUniqueFileName($originalFileName)
         <div class="card overflow-hidden">
             <div class="row no-gutters row-bordered row-border-light">
                 <div class="col-md-3 pt-0">
-                    <div class="list-group list-group-flush account-settings-links">
+                    <div class="list-group list-group-flush account-settings-links d-none d-lg-block">
                         <a class="list-group-item list-group-item-action active" data-toggle="list" href="#account-general">General</a>
                         <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-change-password">Change password</a>
                         <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-actions">Account</a>
+
                     </div>
                 </div>
+                <!-- Daftar navigasi mobile -->
+                <div class="container d-lg-none mt-2">
+                    <div class="list-group">
+                        <a class="list-group-item list-group-item-action active" data-toggle="list" href="#account-general">General</a>
+                        <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-change-password">Change password</a>
+                        <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-actions">Account</a>
+
+                    </div>
+                </div>
+
                 <div class="col-md-9">
                     <div class="tab-content">
                         <!-- Content for General Tab -->
                         <div class="tab-pane fade active show" id="account-general">
-                            <a href="homepage.php" class="back-link" style="color: #808080;"><span class="lnr lnr-arrow-left"></span> Back to Home</a>
+                            <a href="homepage.php" class="back-link" style="color: #808080;"><span class="lnr lnr-home"></span> Back to Home</a>
+
                             <div class="card-body media align-items-center">
                                 <!-- General Tab Content -->
                                 <img src="<?php echo !empty($userData['photo_path']) ? $userData['photo_path'] : 'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png'; ?>" alt class="d-block ui-w-80">
@@ -284,7 +295,7 @@ function generateUniqueFileName($originalFileName)
                                     </div>
 
                                     <div class="form-group">
-                                        <label class="form-label">Company</label>
+                                        <label class="form-label">Company/School</label>
                                         <input type="text" class="form-control" name="company" value="<?php echo $company; ?>">
                                     </div>
                                     <div class="text-right mt-3" id="saveChangesContainer">
@@ -344,10 +355,15 @@ function generateUniqueFileName($originalFileName)
                                     <div class="text-left mt-3">
                                         <button type="submit" class="btn btn-warning" name="logout" id="logoutBtn">Logout</button>&nbsp;
                                         <button type="button" class="btn btn-danger" id="deleteAccountBtn">Delete Account</button>
+
                                     </div>
                                 </form>
                             </div>
                         </div>
+                        <footer class="text-center small tm-footer">
+                            <p class="mb-0">
+                                Copyright &copy; 2023 TechForge Academy</p>
+                        </footer>
                         <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
                         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
                         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -118,6 +118,7 @@ if ($_SESSION['session_role'] !== 'admin') {
 
                     <!-- Bagian Daftar Peserta Pelatihan -->
                     <?php include "tabel.php"; ?>
+                    <?php include "barchart.php"; ?>
 
 
                 </div>
@@ -141,8 +142,6 @@ if ($_SESSION['session_role'] !== 'admin') {
 
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
             <script src="../js/scripts.js"></script>
-            <script src="../assets/demo/chart-area-demo.js"></script>
-            <script src="../assets/demo/chart-bar-demo.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
             <script src="../js/datatables-simple-demo.js"></script>
             <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -158,10 +157,10 @@ if ($_SESSION['session_role'] !== 'admin') {
 
         $.ajax({
             type: "POST",
-            url: "logout.php", // Gantilah dengan URL yang sesuai
+            url: "../../infinite_loop/php/logout.php", // Gantilah dengan URL yang sesuai
             success: function(response) {
                 // Redirect ke halaman login setelah logout
-                window.location.href = "login.php";
+                window.location.href = "../../infinite_loop/php/login_bc.php";
             },
             error: function(error) {
                 console.error("Error during logout:", error);

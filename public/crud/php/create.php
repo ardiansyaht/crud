@@ -20,51 +20,46 @@ $email = "";
 if (isset($_SESSION['session_email']) && isset($_SESSION['session_role'])) {
     $allowedRole = $_SESSION['session_role'];
 
+    $allowedEmail = $_SESSION['session_email'];
 
-    if ($allowedRole === 'admin') {
-    } else {
+    // Query untuk mendapatkan data pengguna berdasarkan email
+    $query = "SELECT * FROM tb_login_bc WHERE email = ?";
+    $stmt = mysqli_prepare($koneksi, $query);
+    mysqli_stmt_bind_param($stmt, "s", $allowedEmail);
+    mysqli_stmt_execute($stmt);
 
-        $allowedEmail = $_SESSION['session_email'];
+    $result = mysqli_stmt_get_result($stmt);
 
-        // Query untuk mendapatkan data pengguna berdasarkan email
-        $query = "SELECT * FROM tb_login_bc WHERE email = ?";
-        $stmt = mysqli_prepare($koneksi, $query);
-        mysqli_stmt_bind_param($stmt, "s", $allowedEmail);
-        mysqli_stmt_execute($stmt);
+    if (!$result) {
+        // Handle kesalahan query jika perlu
+        die("Query failed");
+    }
 
-        $result = mysqli_stmt_get_result($stmt);
+    $user = mysqli_fetch_assoc($result);
 
-        if (!$result) {
-            // Handle kesalahan query jika perlu
-            die("Query failed");
-        }
+    if (!$user || $user['status'] !== 'verified') {
+        // Email tidak ditemukan di database atau status tidak terverifikasi
+        // Lakukan sesuatu (redirect atau lainnya)
+        header("location: ../../infinite_loop/php/homepage.php");
+        exit();
+    }
 
-        $user = mysqli_fetch_assoc($result);
+    // Cek apakah email sudah terdaftar di tb_peserta
+    $query_cek_peserta = "SELECT * FROM peserta WHERE email = ?";
+    $stmt_cek_peserta = mysqli_prepare($koneksi, $query_cek_peserta);
+    mysqli_stmt_bind_param($stmt_cek_peserta, "s", $allowedEmail);
+    mysqli_stmt_execute($stmt_cek_peserta);
 
-        if (!$user || $user['status'] !== 'verified') {
-            // Email tidak ditemukan di database atau status tidak terverifikasi
-            // Lakukan sesuatu (redirect atau lainnya)
-            header("location: ../../infinite_loop/php/homepage.php");
-            exit();
-        }
+    $result_cek_peserta = mysqli_stmt_get_result($stmt_cek_peserta);
 
-        // Cek apakah email sudah terdaftar di tb_peserta
-        $query_cek_peserta = "SELECT * FROM peserta WHERE email = ?";
-        $stmt_cek_peserta = mysqli_prepare($koneksi, $query_cek_peserta);
-        mysqli_stmt_bind_param($stmt_cek_peserta, "s", $allowedEmail);
-        mysqli_stmt_execute($stmt_cek_peserta);
+    if (mysqli_num_rows($result_cek_peserta) > 0) {
+        // Email sudah terdaftar di tb_peserta, beri respons atau tindakan yang sesuai
+        $notification = "Anda sudah mengisi formulir pendaftaran.";
 
-        $result_cek_peserta = mysqli_stmt_get_result($stmt_cek_peserta);
-
-        if (mysqli_num_rows($result_cek_peserta) > 0) {
-            // Email sudah terdaftar di tb_peserta, beri respons atau tindakan yang sesuai
-            $notification = "Anda sudah mengisi formulir pendaftaran.";
-
-            // Replace the following line with the SweetAlert code
-            echo json_encode(array('success' => false, 'error' => $notification));
-            header("location: ../../infinite_loop/php/homepage.php");
-            exit();
-        }
+        // Replace the following line with the SweetAlert code
+        echo json_encode(array('success' => false, 'error' => $notification));
+        header("location: ../../infinite_loop/php/homepage.php");
+        exit();
     }
 } else {
     // Jika 'session_email' atau 'session_role' tidak di-set, redirect atau tindakan lainnya
@@ -98,9 +93,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         return null;
     }
     $err = [
-        validateMaxLength($nama, 50, 'Nama'),
-        validateMaxLength($sekolah, 50, 'Sekolah'),
-        validateMaxLength($jurusan, 50, 'Jurusan'),
+        validateMaxLength($nama, 30, 'Nama'),
+        validateMaxLength($sekolah, 30, 'Sekolah'),
+        validateMaxLength($jurusan, 20, 'Jurusan'),
         validateMaxLength($no_hp, 15, 'Nomor Telepon'),
         validateMaxLength($alamat, 50, 'Alamat')
     ];
@@ -145,8 +140,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Pendaftaran Peserta</title>
-    <link rel="icon" type="image/png" href="../assets/img/favicon.ico" />
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="icon" type="image/png" href="crud/assets/img/favicon.ico" />
+    <link rel="stylesheet" href="..//css/styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

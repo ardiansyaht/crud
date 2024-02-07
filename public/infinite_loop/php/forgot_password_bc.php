@@ -109,6 +109,10 @@ if (isset($_POST['forgot_password'])) {
             <img src="../login-register/images/image-2.png" alt="" class="image-2">
         </div>
     </div>
+    <footer class="text-center small tm-footer">
+        <p class="mb-0">
+            Copyright &copy; 2023 TechForge Academy</p>
+    </footer>
 
     <script src="../login-register/js/jquery-3.3.1.min.js"></script>
     <script src="../login-register/js/main.js"></script>

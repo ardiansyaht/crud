@@ -52,6 +52,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['logout'])) {
 if (isset($_POST['login'])) {
     $email    = $_POST['email'];
     $password = $_POST['password'];
+    // Validasi reCAPTCHA
+    $recaptchaSecretKey = '6LceCFspAAAAAOiZ7XgAOMgIboFKgD0vsXwQb7Dn';
+    $recaptchaResponse = $_POST['g-recaptcha-response'];
+    $recaptchaVerifyUrl = "https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaSecretKey&response=$recaptchaResponse";
+
+    $recaptchaVerify = json_decode(file_get_contents($recaptchaVerifyUrl));
+
+    if (!$recaptchaVerify->success) {
+        $err .= "<li>Verifikasi reCAPTCHA gagal.</li>";
+    }
+
 
     $sql1 = "SELECT * FROM tb_login_bc WHERE email = '$email'";
     $q1   = mysqli_query($koneksi, $sql1);
@@ -125,6 +136,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
     <link rel="icon" type="image/png" href="../img/favicon.ico" />
     <link rel="stylesheet" href="../login-register/fonts/linearicons/style.css">
     <link rel="stylesheet" href="../login-register/css/style.css">
+    <script src="https://www.google.com/recaptcha/api.js"></script>
     <style>
 
     </style>
@@ -160,6 +172,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                 <button type="submit" name="login">
                     <span>Login</span>
                 </button>
+                <div class="g-recaptcha" data-sitekey="6LceCFspAAAAAE2ZLBwHhGBXA1lxMVOyMP_qG2BQ"></div>
 
                 <!-- Footer Section -->
                 <div class="footer">
@@ -177,6 +190,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                 <!-- End Footer Section -->
             </form>
             <img src="../login-register/images/image-2.png" alt="" class="image-2">
+
         </div>
     </div>
 

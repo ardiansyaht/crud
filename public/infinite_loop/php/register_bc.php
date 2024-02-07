@@ -189,6 +189,11 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                 <button type="submit" name="register">
                     <span>Register</span>
                 </button>
+                <footer class="text-center small tm-footer">
+                    <p class="mb-0">
+                        Copyright &copy; 2023 TechForge Academy</p>
+                </footer>
+
             </form>
 
 
