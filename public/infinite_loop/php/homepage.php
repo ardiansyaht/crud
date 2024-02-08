@@ -1,4 +1,5 @@
 <?php
+header('X-Frame-Options: DENY');
 session_start([
   'cookie_secure' => true,
   'cookie_httponly' => true,
@@ -31,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Pengaturan email
     $mail->setFrom(MAIL_FROM, $name);
-    $mail->addAddress(MAIL_TO); // Alamat email tujuan (dalam hal ini, email Anda sendiri)
+    $mail->addAddress(MAIL_TO);
     $mail->Subject = 'New Contact Form Submission';
     $mail->Body = "Name: $name\nEmail: $email\nMessage: $message";
     // Kirim email
@@ -50,7 +51,7 @@ if (!isset($_SESSION['session_email'])) {
 $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
 function isEmailRegistered($email)
 {
-  $pdo = new PDO("mysql:host=localhost;dbname=crud", "root", "");
+  $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8", DB_USER, DB_PASS);
   $stmt = $pdo->prepare("SELECT COUNT(*) FROM peserta WHERE email = ?");
   $stmt->execute([$email]);
 
@@ -428,11 +429,55 @@ function isEmailRegistered($email)
         var emailInput = document.getElementById("email");
         var messageInput = document.getElementById("message");
 
+        // Melakukan validasi pada nilai input
+        if (!isValidName(nameInput.value)) {
+          Swal.fire({
+            title: 'Validation Error',
+            text: 'Invalid name. Harap pastikan hanya berisi huruf dan tidak mengandung simbol khusus.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+          event.preventDefault(); // Menghentikan pengiriman formulir jika validasi tidak terpenuhi
+          return false;
+        }
+
+        if (!isValidMessage(messageInput.value)) {
+          Swal.fire({
+            title: 'Validation Error',
+            text: 'Invalid message. Harap pastikan tidak mengandung simbol khusus dan memiliki panjang maksimum 30 karakter.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+          event.preventDefault(); // Menghentikan pengiriman formulir jika validasi tidak terpenuhi
+          return false;
+        }
+
         // Melakukan encoding pada nilai input sebelum mengirimkan formulir
         nameInput.value = encodeHTML(nameInput.value);
         emailInput.value = encodeHTML(emailInput.value);
         messageInput.value = encodeHTML(messageInput.value);
+
+        // Tampilkan notifikasi SweetAlert untuk berhasil
+        Swal.fire({
+          title: 'Form Submitted!',
+          text: 'Your form has been submitted successfully.',
+          icon: 'success',
+          confirmButtonText: 'OK',
+          timer: 2000
+        });
+
+        return true; // Lanjutkan dengan pengiriman formulir jika semua validasi terpenuhi
       });
+
+      function isValidName(name) {
+        // Validasi hanya huruf, maksimal 30 karakter
+        return /^[a-zA-Z\s']{1,30}$/.test(name);
+      }
+
+      function isValidMessage(message) {
+        // Validasi tidak mengandung simbol khusus, maksimal 30 karakter
+        return /^[a-zA-Z0-9\s]+$/.test(message) && message.length <= 30;
+      }
 
       function encodeHTML(input) {
         return input.replace(/&/g, "&amp;")
@@ -442,6 +487,8 @@ function isEmailRegistered($email)
           .replace(/'/g, "&#39;");
       }
     </script>
+
+
     <script>
       function getOffSet() {
         var _offset = 450;
@@ -631,25 +678,6 @@ function isEmailRegistered($email)
               }
             }
           ]
-        });
-      });
-    </script>
-    <script>
-      document.getElementById('contactForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        // Simpan formulir dalam variabel
-        var form = this;
-
-        // Kirim formulir secara synchronous (non-Ajax)
-        form.submit();
-
-        // Tambahkan notifikasi SweetAlert
-        Swal.fire({
-          title: 'Form Submitted!',
-          text: 'Your form has been submitted successfully.',
-          icon: 'success',
-          confirmButtonText: 'OK'
         });
       });
     </script>

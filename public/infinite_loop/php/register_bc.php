@@ -1,4 +1,5 @@
 <?php
+header('X-Frame-Options: DENY');
 session_start();
 require __DIR__ . '/../../../nonpublic/vendor/autoload.php';
 require 'config_register.php';
@@ -42,6 +43,10 @@ if (isset($_POST['register'])) {
     // Validasi form di sisi klien
     if (empty($username) || empty($phone_number) || empty($email) || empty($newPassword) || empty($confirmPassword)) {
         $err .= "<li>Silakan lengkapi semua kolom.</li>";
+    } elseif (strlen($username) < 4 || !isValidInput($username)) {
+        $err .= "<li>Username harus terdiri dari minimal 4 karakter dan hanya boleh mengandung karakter alfanumerik dan simbol (@, ., _, -).</li>";
+    } elseif (!isValidInput($phone_number)) {
+        $err .= "<li>Nomor telepon hanya boleh mengandung karakter angka.</li>";
     } elseif (strlen($newPassword) < 8 || !preg_match('/[a-z]/', $newPassword) || !preg_match('/[A-Z]/', $newPassword) || !preg_match('/[0-9]/', $newPassword) || !preg_match('/[!@#$%^&*()_+]/', $newPassword)) {
         $err .= "<li>Kata sandi harus memenuhi persyaratan: minimal 8 karakter, 1 huruf kecil, 1 huruf besar, 1 angka, dan 1 simbol.</li>";
     } elseif ($newPassword !== $confirmPassword) {
@@ -128,12 +133,12 @@ if (isset($_POST['register'])) {
         }
     }
 }
+function isValidInput($input)
+{
+    $pola = '/^[a-zA-Z0-9@._-]+$/';
+    return preg_match($pola, $input);
+}
 
-// // Cek apakah pengguna sudah login
-// if (!isset($_SESSION['session_username'])) {
-//     header("location: ../../crud/php/login.php");
-//     exit();
-// }
 $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
 ?>
 <!DOCTYPE html>

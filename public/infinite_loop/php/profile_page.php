@@ -1,4 +1,5 @@
 <?php
+header('X-Frame-Options: DENY');
 session_start([
     'cookie_secure' => true,
     'cookie_httponly' => true,
@@ -119,6 +120,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $company = mysqli_real_escape_string($koneksi, $_POST["company"]);
         $username = mysqli_real_escape_string($koneksi, $_POST["username"]);
 
+        // Validasi panjang minimum hanya untuk field yang diisi
+        if ((!empty($name) && !isValidLength($name, 4)) || (!empty($company) && !isValidLength($company, 4)) || (!empty($username) && !isValidLength($username, 4))) {
+            $_SESSION['notification'] = "Panjang minimum untuk field yang diisi adalah 4 karakter.";
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
+        }
+
+        // Validasi nama hanya boleh huruf
+        if (!empty($name) && !isValidName($name)) {
+            $_SESSION['notification'] = "Harap pastikan hanya berisi huruf.";
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
+        }
+
+        // Validasi perusahaan boleh mengandung huruf, angka, dan simbol (.) hanya jika diisi
+        if (!empty($company) && !isValidCompany($company)) {
+            $_SESSION['notification'] = "Invalid company name. Harap pastikan hanya berisi huruf, angka, dan titik.";
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
+        }
+
+        // Validasi username hanya boleh mengandung simbol @, ., _, - hanya jika diisi
+        if (!empty($username) && !isValidUsername($username)) {
+            $_SESSION['notification'] = "Invalid username. Harap pastikan hanya berisi @, ., _, - symbols.";
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
+        }
+
         $updateQuery = "UPDATE tb_login_bc SET name=?, company=?, username=? WHERE email=?";
         $stmt = mysqli_prepare($koneksi, $updateQuery);
         mysqli_stmt_bind_param($stmt, "ssss", $name, $company, $username, $email);
@@ -137,8 +166,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
 
                 // Check file size
-                if ($_FILES['profile_photo']['size'] > 10000000) {
-                    $_SESSION['notification'] = "Sorry, the maximum file size allowed is 10MB.";
+                if ($_FILES['profile_photo']['size'] > 2000000) {
+                    $_SESSION['notification'] = "Sorry, the maximum file size allowed is 2MB.";
                     $uploadOk = 0;
                 }
 
@@ -198,6 +227,28 @@ function generateUniqueFileName($originalFileName)
     $uniqueName = hash('sha256', uniqid(rand(), true)) . '.' . $extension;
     return $uniqueName;
 }
+function isValidName($input)
+{
+    // Validasi hanya huruf
+    return preg_match('/^[a-zA-Z\s\']+$/u', $input);
+}
+
+function isValidCompany($input)
+{
+    // Validasi boleh mengandung huruf, angka, spasi, dan simbol (.)
+    return preg_match('/^[a-zA-Z0-9. ]+$/u', $input);
+}
+
+function isValidUsername($input)
+{
+    // Validasi hanya boleh mengandung simbol @, ., _, -
+    return preg_match('/^[a-zA-Z0-9@._-]+$/u', $input);
+}
+function isValidLength($input, $minLength)
+{
+    // Validasi panjang minimum
+    return strlen($input) >= $minLength;
+}
 ?>
 
 <!DOCTYPE html>
@@ -256,7 +307,7 @@ function generateUniqueFileName($originalFileName)
                                             <input type="file" class="account-settings-fileinput" name="profile_photo">
                                         </label> &nbsp;
                                         <button type="submit" class="btn btn-default md-btn-flat" name="reset_photo">Reset</button>
-                                        <div class="text-black small mt-1">Allowed JPG, JPEG or PNG. Max size of 10MB</div>
+                                        <div class="text-black small mt-1">Allowed JPG, JPEG or PNG. Max size of 2MB</div>
                                 </div>
                             </div>
                             <hr class="border-light m-0">

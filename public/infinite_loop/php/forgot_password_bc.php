@@ -1,4 +1,5 @@
 <?php
+header('X-Frame-Options: DENY');
 session_start([
     'cookie_secure' => true,
     'cookie_httponly' => true,
@@ -19,55 +20,74 @@ $koneksi        = mysqli_connect($host_db, $user_db, $pass_db, $nama_db);
 
 if (isset($_POST['forgot_password'])) {
     $email = $_POST['email'];
-    $sqlCheckUser = "SELECT * FROM $tabel_pengguna WHERE email = '$email'";
-    $resultCheckUser = mysqli_query($koneksi, $sqlCheckUser);
-    if (mysqli_num_rows($resultCheckUser) > 0) {
-        // Generate token untuk reset password
-        $resetToken = bin2hex(random_bytes(32));
 
-        // Simpan token dan waktu kedaluwarsa di database
-        $sqlUpdateToken = "UPDATE $tabel_pengguna SET reset_token = '$resetToken', reset_token_expires = DATE_ADD(NOW(), INTERVAL 1 MINUTE) WHERE email = '$email'";
-        mysqli_query($koneksi, $sqlUpdateToken);
-
-        // Kirim email reset password menggunakan PHPMailer
-        $resetLink = "http://localhost/web-1/project-2/public/infinite_loop/php/reset_password_bc.php?token=$resetToken&email=$email";
-
-        $mail = new PHPMailer(true);
-
-        try {
-            // Pengaturan server SMTP Gmail
-            $mail->isSMTP();
-            $mail->Host = SMTP_HOST;
-            $mail->SMTPAuth = true;
-            $mail->Username = SMTP_USERNAME;
-            $mail->Password = SMTP_PASSWORD;
-            $mail->SMTPSecure = 'ssl';
-            $mail->Port = SMTP_PORT;
-
-            // Pengaturan email
-            $mail->setFrom(MAIL_FROM, 'bang al');
-            $mail->addAddress($email);
-            $mail->Subject = 'Reset Your Password';
-            $mail->Body = "Click the following link to reset your password: $resetLink";
-
-            // Aktifkan output debugging
-            $mail->SMTPDebug = 0;
-
-            // Kirim email
-            $mail->send();
-
-            // Tampilkan pesan sukses
-            $success_message = "Link reset password telah dikirim ke email Anda.";
-        } catch (Exception $e) {
-            // Tampilkan pesan kesalahan jika email tidak dapat dikirim
-            $error_message = 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo;
-        }
+    // Validasi email (tambahkan validasi sesuai kebutuhan)
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error_message = "Format email tidak valid.";
     } else {
-        // Tampilkan pesan bahwa email tidak terdaftar
-        $error_message = "Email tidak terdaftar.";
+        $sqlCheckUser = "SELECT * FROM $tabel_pengguna WHERE email = ?";
+        $stmtCheckUser = mysqli_prepare($koneksi, $sqlCheckUser);
+        mysqli_stmt_bind_param($stmtCheckUser, "s", $email);
+        mysqli_stmt_execute($stmtCheckUser);
+        $resultCheckUser = mysqli_stmt_get_result($stmtCheckUser);
+
+        if (mysqli_num_rows($resultCheckUser) > 0) {
+            // Generate token untuk reset password
+            $resetToken = bin2hex(random_bytes(32));
+
+            // Simpan token dan waktu kedaluwarsa di database
+            $sqlUpdateToken = "UPDATE $tabel_pengguna SET reset_token = ?, reset_token_expires = DATE_ADD(NOW(), INTERVAL 10 MINUTE) WHERE email = ?";
+            $stmtUpdateToken = mysqli_prepare($koneksi, $sqlUpdateToken);
+            mysqli_stmt_bind_param($stmtUpdateToken, "ss", $resetToken, $email);
+            mysqli_stmt_execute($stmtUpdateToken);
+
+            // Kirim email reset password menggunakan PHPMailer
+            $resetLink = "http://localhost/web-1/project-2/public/infinite_loop/php/reset_password_bc.php?token=$resetToken&email=$email";
+
+            $mail = new PHPMailer(true);
+
+            try {
+                // Pengaturan server SMTP Gmail
+                $mail->isSMTP();
+                $mail->Host = SMTP_HOST;
+                $mail->SMTPAuth = true;
+                $mail->Username = SMTP_USERNAME;
+                $mail->Password = SMTP_PASSWORD;
+                $mail->SMTPSecure = 'ssl';
+                $mail->Port = SMTP_PORT;
+
+                // Pengaturan email
+                $mail->setFrom(MAIL_FROM, 'bang al');
+                $mail->addAddress($email);
+                $mail->Subject = 'Reset Your Password';
+                $mail->Body = "Click the following link to reset your password: $resetLink";
+
+                // Aktifkan output debugging
+                $mail->SMTPDebug = 0;
+
+                // Kirim email
+                $mail->send();
+
+                // Tampilkan pesan sukses
+                $success_message = "Link reset password telah dikirim ke email Anda.";
+            } catch (Exception $e) {
+                // Tampilkan pesan kesalahan jika email tidak dapat dikirim
+                $error_message = 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo;
+            }
+        } else {
+            // Tampilkan pesan bahwa email tidak terdaftar
+            $error_message = "Email tidak terdaftar.";
+        }
+
+        mysqli_stmt_close($stmtCheckUser);
+        mysqli_stmt_close($stmtUpdateToken);
     }
 }
+
+// Menutup koneksi
+mysqli_close($koneksi);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 

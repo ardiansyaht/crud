@@ -1,4 +1,5 @@
 <?php
+header('X-Frame-Options: DENY');
 session_start([
     'cookie_secure' => true,
     'cookie_httponly' => true,
@@ -94,11 +95,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $err = [
         validateMaxLength($nama, 30, 'Nama'),
+        validateMinLength($nama, 4, 'Nama'),
         validateMaxLength($sekolah, 30, 'Sekolah'),
+        validateMinLength($sekolah, 4, 'Sekolah'),
         validateMaxLength($jurusan, 20, 'Jurusan'),
+        validateMinLength($jurusan, 4, 'Jurusan'),
         validateMaxLength($no_hp, 15, 'Nomor Telepon'),
-        validateMaxLength($alamat, 50, 'Alamat')
+        validateMinLength($no_hp, 4, 'Nomor Telepon'),
+        validateMaxLength($alamat, 50, 'Alamat'),
+        validateMinLength($alamat, 4, 'Alamat'),
+        isValidAlphabetic($nama, 'Nama'),
+        isValidAlphabetic($sekolah, 'Sekolah'),
+        isValidAlphabetic($jurusan, 'Jurusan'),
+        isValidAlphabetic($alamat, 'Alamat'),
     ];
+
 
     // Hapus elemen array yang bernilai null (valid)
     $err = array_filter($err);
@@ -131,6 +142,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo json_encode(array('success' => false, 'error' => implode('<br>', $err)));
         exit();
     }
+}
+function isValidAlphabetic($value, $field_name)
+{
+    if (!preg_match('/^[a-zA-Z\s]+$/', $value)) {
+        return "$field_name hanya boleh mengandung huruf.";
+    }
+    return null;
+}
+// Fungsi validasi untuk memeriksa panjang minimal 4 karakter
+function validateMinLength($value, $min_length, $field_name)
+{
+    if (strlen($value) < $min_length) {
+        return "$field_name harus memiliki panjang minimal $min_length karakter.";
+    }
+    return null;
 }
 ?>
 <!DOCTYPE html>

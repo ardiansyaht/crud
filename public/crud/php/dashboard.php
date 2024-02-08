@@ -1,4 +1,5 @@
 <?php
+header('X-Frame-Options: DENY');
 session_start([
     'cookie_secure' => true,
     'cookie_httponly' => true,
@@ -123,6 +124,7 @@ if ($_SESSION['session_role'] !== 'admin') {
 
                 </div>
             </main>
+
             <script>
                 function logout() {
                     // Lakukan proses logout di sini (hapus sesi, dll.)

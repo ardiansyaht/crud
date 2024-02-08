@@ -1,4 +1,5 @@
 <?php
+header('X-Frame-Options: DENY');
 session_start([
   'cookie_secure' => true,
   'cookie_httponly' => true,

@@ -1,4 +1,5 @@
 <?php
+header('X-Frame-Options: DENY');
 session_start([
     'cookie_secure' => true,
     'cookie_httponly' => true,
@@ -60,15 +61,15 @@ if (isset($_POST['resend_code'])) {
                 try {
                     // Pengaturan server SMTP Gmail
                     $mail->isSMTP();
-                    $mail->Host = 'smtp.gmail.com';
+                    $mail->Host = SMTP_HOST;
                     $mail->SMTPAuth = true;
-                    $mail->Username = 'ardiansyah3151@gmail.com';
-                    $mail->Password = 'ecesgskgnryehfim';
+                    $mail->Username = SMTP_USERNAME;
+                    $mail->Password = SMTP_PASSWORD;
                     $mail->SMTPSecure = 'ssl';
-                    $mail->Port = 465;
+                    $mail->Port = SMTP_PORT;
 
                     // Pengaturan email
-                    $mail->setFrom('ardiansyah3151@gmail.com', 'Code'); // Ganti dengan alamat email dan nama Anda
+                    $mail->setFrom(MAIL_FROM, 'Code'); // Ganti dengan alamat email dan nama Anda
                     $mail->addAddress($email_resend); // Alamat email pengguna
                     $mail->Subject = 'Resend Code Verification';
                     $mail->Body = "Kode verifikasi Anda: $otp_code  Code OTP akan kadaluarsa dalam 2 menit";
@@ -163,8 +164,8 @@ if (isset($_POST['verify'])) {
     $otp_code = $email = "";
 }
 
-// ... (Bagian code yang lain tetap sama)
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

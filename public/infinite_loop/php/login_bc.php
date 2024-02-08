@@ -1,4 +1,5 @@
 <?php
+header('X-Frame-Options: DENY');
 session_start([
     'cookie_secure' => true,
     'cookie_httponly' => true,
@@ -52,6 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['logout'])) {
 if (isset($_POST['login'])) {
     $email    = $_POST['email'];
     $password = $_POST['password'];
+
     // Validasi reCAPTCHA
     $recaptchaSecretKey = '6LceCFspAAAAAOiZ7XgAOMgIboFKgD0vsXwQb7Dn';
     $recaptchaResponse = $_POST['g-recaptcha-response'];
@@ -119,10 +121,7 @@ if (isset($_POST['login'])) {
         }
     }
 }
-// if (!isset($_SESSION['session_username'])) {
-//     header("location: ../../crud/php/login.php");
-//     exit();
-// }
+
 $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
 ?>
 
