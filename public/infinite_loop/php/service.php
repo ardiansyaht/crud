@@ -390,32 +390,32 @@ if (!isset($_SESSION['session_email'])) {
       <div class="row">
         <div class="col-lg-2 col-sm-4 col-6">
           <div class="item">
-            <img src="../assets/images/techforge.png" />
+            <img src="../assets/images/techforge.png" alt="" />
           </div>
         </div>
         <div class="col-lg-2 col-sm-4 col-6">
           <div class="item">
-            <img src="../assets/images/techforge.png" />
+            <img src="../assets/images/techforge.png" alt="" />
           </div>
         </div>
         <div class="col-lg-2 col-sm-4 col-6">
           <div class="item">
-            <img src="../assets/images/techforge.png" />
+            <img src="../assets/images/techforge.png" alt="" />
           </div>
         </div>
         <div class="col-lg-2 col-sm-4 col-6">
           <div class="item">
-            <img src="../assets/images/techforge.png" />
+            <img src="../assets/images/techforge.png" alt="" />
           </div>
         </div>
         <div class="col-lg-2 col-sm-4 col-6">
           <div class="item">
-            <img src="../assets/images/techforge.png" />
+            <img src="../assets/images/techforge.png" alt="" />
           </div>
         </div>
         <div class="col-lg-2 col-sm-4 col-6">
           <div class="item">
-            <img src="../assets/images/techforge.png" />
+            <img src="../assets/images/techforge.png" alt="" />
           </div>
         </div>
       </div>

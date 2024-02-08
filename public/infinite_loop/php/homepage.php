@@ -106,9 +106,6 @@ function isEmailRegistered($email)
             <li class="nav-item">
               <a class="nav-link tm-nav-link" href="#contact">Kontak Kami</a>
             </li>
-
-
-
             <?php if (isset($_SESSION['session_email'])) : ?>
               <li class="nav-item">
                 <a class="nav-link tm-nav-link" href="profile_page.php">Profile</a>
