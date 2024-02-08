@@ -76,7 +76,6 @@ function isEmailRegistered($email)
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 
-
 </head>
 
 <body>
@@ -92,6 +91,7 @@ function isEmailRegistered($email)
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <i class="fas fa-bars navbar-toggler-icon"></i>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item">
@@ -106,32 +106,40 @@ function isEmailRegistered($email)
             <li class="nav-item">
               <a class="nav-link tm-nav-link" href="#contact">Kontak Kami</a>
             </li>
+
+
+
             <?php if (isset($_SESSION['session_email'])) : ?>
               <li class="nav-item">
                 <a class="nav-link tm-nav-link" href="profile_page.php">Profile</a>
               </li>
             <?php endif; ?>
-            <?php
-            if (!isset($_SESSION['session_email'])) {
-              echo '<a class="nav-link tm-nav-link" href="login_bc.php">Login</a>';
-            }
-            ?>
-            </li>
-            <?php if ($userRole == 'admin') { ?>
+
+            <?php if ($userRole == 'admin') : ?>
               <li class="nav-item">
                 <a class="nav-link tm-nav-link" href="../../crud/php/dashboard.php">Dashboard</a>
               </li>
-            <?php } ?>
-            </li>
-            </li>
-            <!-- <li class="nav-item">
-              <a class="nav-link tm-nav-link" href="#logout" id="logoutLink">Logout</a>
-            </li> -->
+            <?php endif; ?>
+
+            <?php
+            if (!isset($_SESSION['session_email'])) {
+              echo '<li class="nav-item"><a class="nav-link tm-nav-link" href="login_bc.php">Login</a></li>';
+            }
+            ?>
           </ul>
+          <li class="nav-item dropdown">
+            <a class="nav-link tm-nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Pages
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="pagesDropdown">
+              <li><a class="dropdown-item" href="about.php">About</a></li>
+              <li><a class="dropdown-item" href="service.php">Service</a></li>
+
+            </ul>
+          </li>
         </div>
       </div>
     </nav>
-
     <div class="text-center tm-hero-text-container">
       <div class="tm-hero-text-container-inner">
         <h2 class="tm-hero-title">TechForge Academy</h2>
@@ -398,6 +406,26 @@ function isEmailRegistered($email)
     <script src="../js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        // Ambil elemen toggle dan dropdown
+        var toggleBtn = document.querySelector('.nav-link.tm-nav-link');
+        var dropdown = document.querySelector('.has-sub .sub-menu');
+
+        // Tambahkan event listener untuk mengganti kelas saat toggle di klik
+        toggleBtn.addEventListener('click', function() {
+          dropdown.classList.toggle('show');
+        });
+
+        // Tambahkan event listener untuk menutup dropdown saat klik di luar dropdown
+        document.addEventListener('click', function(event) {
+          if (!toggleBtn.contains(event.target) && !dropdown.contains(event.target)) {
+            dropdown.classList.remove('show');
+          }
+        });
+      });
+    </script>
+
+    <script>
       document.getElementById("contactForm").addEventListener("submit", function(event) {
         var nameInput = document.getElementById("name");
         var emailInput = document.getElementById("email");
@@ -629,7 +657,20 @@ function isEmailRegistered($email)
       });
     </script>
 
+    <script>
+      window.onscroll = function() {
+        scrollFunction()
+      };
 
+      function scrollFunction() {
+        var navbar = document.getElementById("tmNav");
+        if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+          navbar.classList.add("scroll");
+        } else {
+          navbar.classList.remove("scroll");
+        }
+      }
+    </script>
 </body>
 
 </html>

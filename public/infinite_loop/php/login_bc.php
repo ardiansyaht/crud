@@ -143,7 +143,6 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
 </head>
 
 <body>
-
     <div class="wrapper">
         <div class="inner">
 

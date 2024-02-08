@@ -1,9 +1,8 @@
-
 @import url("https://fonts.googleapis.com/css?family=Raleway:100,300,400,500,700,900");
 
 body {
-	font-family: "Raleway", sans-serif;
-	font-size: 1.2em;
+  font-family: "Raleway", sans-serif;
+  font-size: 1.2em;
   color: #707070;
   margin: 0;
   padding: 0;
@@ -11,13 +10,13 @@ body {
 }
 a {
   transition: all 0.3s ease;
-  color: #38B;
+  color: #38b;
 }
 
 a:hover,
 a:focus {
   text-decoration: none;
-  color: #D40;
+  color: #d40;
 }
 
 a:focus {
@@ -40,7 +39,6 @@ blockquote {
 .tm-section-pad-top {
   padding-top: 80px;
   padding-bottom: 0px;
-  
 }
 
 .tm-content-box {
@@ -49,7 +47,7 @@ blockquote {
 }
 
 .tm-text-primary {
-  color: #37A;
+  color: #37a;
 }
 
 .tm-font-big {
@@ -65,17 +63,15 @@ blockquote {
 .tm-btn-primary:hover,
 .tm-btn-primary:focus {
   color: white;
-  background-color: #38B;
+  background-color: #38b;
 }
-
-
 
 .tm-navbar {
   position: fixed;
   width: 100%;
   z-index: 1000;
   background-color: transparent;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   transition: all 0.3s ease;
 }
 
@@ -92,7 +88,7 @@ blockquote {
 
 .navbar-brand:hover,
 .tm-navbar.scroll .navbar-brand:hover {
-  color: #38B;
+  color: #38b;
 }
 
 .tm-navbar.scroll .navbar-brand {
@@ -114,7 +110,7 @@ blockquote {
 .tm-navbar.scroll .tm-nav-link:hover,
 .tm-navbar.scroll .tm-nav-link.current,
 .tm-nav-link:hover {
-  color: #FFF;
+  color: #fff;
   background-color: #369;
 }
 
@@ -136,11 +132,33 @@ blockquote {
 .tm-navbar.scroll .navbar-toggler-icon {
   color: #707070;
 }
+/* Navigasi dropdown "Pages" */
+.has-sub .sub-menu {
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  margin-top: 8px; /* Sesuaikan dengan jarak dari link utama */
+  border: none !important; /* Gunakan !important untuk memastikan penggantian aturan */
+  border-top: 1px solid #e9ecef; /* Sesuaikan warna dan tebal sesuai kebutuhan Anda */
+}
+
+.has-sub .sub-menu li {
+  padding: 10px;
+}
+
+.has-sub .sub-menu a {
+  color: #333;
+}
+
+.has-sub .sub-menu a:hover {
+  color: #369;
+  background-color: #e9ecef;
+}
 
 /* Hero */
 
 #infinite {
-	background-color: #222;
+  background-color: #222;
   background-image: url(../img/bg-1.jpg);
   background-repeat: no-repeat;
   background-size: cover;
@@ -223,21 +241,19 @@ blockquote {
 }
 
 .tm-down-arrow {
-  	color: #FFF;
-    cursor: pointer;
-    background: #357;
-    padding: 15px 40px;
-    transition: all 0.3s ease;
+  color: #fff;
+  cursor: pointer;
+  background: #357;
+  padding: 15px 40px;
+  transition: all 0.3s ease;
 }
 
 .tm-down-arrow:hover,
 .tm-down-arrow:focus {
-  color: #FFF;
-  background: #37A;
+  color: #fff;
+  background: #37a;
   padding: 20px 50px;
 }
-
-
 
 #introduction {
   padding-bottom: 100px;
@@ -254,11 +270,11 @@ blockquote {
 
 .tm-icon {
   display: block;
-  color: #37A;
+  color: #37a;
 }
 
 .tm-continue {
-	padding: 20px 0 30px 0;
+  padding: 20px 0 30px 0;
 }
 
 #testimonials {
@@ -315,8 +331,6 @@ blockquote {
   font-size: 1.1rem;
 }
 
-
-
 .tm-section-desc {
   max-width: 650px;
   width: 100%;
@@ -363,7 +377,6 @@ blockquote {
   font-size: 18px;
 }
 
-
 .grid figure {
   position: relative;
   float: left;
@@ -404,7 +417,6 @@ blockquote {
   height: 100%;
 }
 
-
 .grid figure figcaption > a {
   z-index: 1000;
   text-indent: 200%;
@@ -433,7 +445,6 @@ blockquote {
   font-size: 68.5%;
 }
 
-
 figure.effect-honey {
   background: #4a3753;
   max-width: 220px;
@@ -455,7 +466,7 @@ figure.effect-honey figcaption::before {
   left: 0;
   width: 100%;
   height: 10px;
-  background: #38C;
+  background: #38c;
   content: "";
   -webkit-transform: translate3d(0, 10px, 0);
   transform: translate3d(0, 10px, 0);
@@ -496,10 +507,8 @@ figure.effect-honey:hover h2 i {
 }
 
 .tm-container-gallery {
-	padding-top: 30px;
-	}
-
-
+  padding-top: 30px;
+}
 
 #contact {
   color: white;
@@ -507,13 +516,12 @@ figure.effect-honey:hover h2 i {
   background-image: url(../img/infinite-loop-03.jpg);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: cover; 
+  background-size: cover;
   min-height: 980px;
   position: relative;
   padding-bottom: 50px;
   padding-top: 100px;
 }
-
 
 .contact-item {
   margin-left: 20px;
@@ -537,8 +545,8 @@ figure.effect-honey:hover h2 i {
 }
 
 .tm-input {
-	margin: 0 0 20px 0;
-	width: 90%;
+  margin: 0 0 20px 0;
+  width: 90%;
   padding: 8px 20px;
   border-radius: 6px;
   border: 1px solid white;
@@ -547,31 +555,28 @@ figure.effect-honey:hover h2 i {
 }
 
 .tm-btn-submit {
-	font-size: 0.9em;
-	color: #fff;
-	background-color: #369;
-	width: 50%;
-	margin-bottom: 60px;
+  font-size: 0.9em;
+  color: #fff;
+  background-color: #369;
+  width: 50%;
+  margin-bottom: 60px;
 }
 
 .tm-btn-submit:hover {
-	color: #fff;
-	background-color: #38B;
+  color: #fff;
+  background-color: #38b;
 }
 
 ::placeholder {
-  
   color: white;
-  opacity: 1; 
+  opacity: 1;
 }
 
 :-ms-input-placeholder {
-  
   color: white;
 }
 
 ::-ms-input-placeholder {
-  
   color: white;
 }
 
@@ -584,11 +589,11 @@ figure.effect-honey:hover h2 i {
 }
 
 .tm-footer a {
-	color: #fff;
+  color: #fff;
 }
 
 .tm-footer a:hover {
-	color: #9CF;
+  color: #9cf;
 }
 
 .tm-footer-link {
@@ -597,7 +602,7 @@ figure.effect-honey:hover h2 i {
 
 .tm-footer-link:hover,
 .tm-footer-link:focus {
-  color: #38B;
+  color: #38b;
   text-decoration: none;
 }
 
@@ -613,8 +618,8 @@ p {
   .navbar-expand-md .navbar-nav .nav-link {
     padding-right: 30px;
     padding-left: 30px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
-}
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
 }
 
 @media (min-width: 1200px) {
@@ -653,7 +658,6 @@ p {
 }
 
 @media (max-width: 767px) {
-
   .navbar-nav {
     max-width: 200px;
     text-align: right;
@@ -667,7 +671,7 @@ p {
 
   .navbar-collapse .nav-link {
     color: #707070;
-	padding-right: 20px;
+    padding-right: 20px;
   }
 }
 
