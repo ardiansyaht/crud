@@ -35,10 +35,11 @@ if (isset($_POST['forgot_password'])) {
             // Generate token untuk reset password
             $resetToken = bin2hex(random_bytes(32));
 
-            // Simpan token dan waktu kedaluwarsa di database
-            $sqlUpdateToken = "UPDATE $tabel_pengguna SET reset_token = ?, reset_token_expires = DATE_ADD(NOW(), INTERVAL 10 MINUTE) WHERE email = ?";
+            date_default_timezone_set('Asia/Jakarta');
+            $resetTokenExpires = date('Y-m-d H:i:s', strtotime('+10 minutes'));
+            $sqlUpdateToken = "UPDATE $tabel_pengguna SET reset_token = ?, reset_token_expires = ? WHERE email = ?";
             $stmtUpdateToken = mysqli_prepare($koneksi, $sqlUpdateToken);
-            mysqli_stmt_bind_param($stmtUpdateToken, "ss", $resetToken, $email);
+            mysqli_stmt_bind_param($stmtUpdateToken, "sss", $resetToken, $resetTokenExpires, $email);
             mysqli_stmt_execute($stmtUpdateToken);
 
             // Kirim email reset password menggunakan PHPMailer
@@ -69,7 +70,7 @@ if (isset($_POST['forgot_password'])) {
                 $mail->send();
 
                 // Tampilkan pesan sukses
-                $success_message = "Link reset password telah dikirim ke email Anda.";
+                $success_message = "Link reset password telah dikirim ke email Anda. Bila tidak ada di kotak pesan silahkan cek di spam";
             } catch (Exception $e) {
                 // Tampilkan pesan kesalahan jika email tidak dapat dikirim
                 $error_message = 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo;

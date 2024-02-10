@@ -156,8 +156,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($resultUpdate) {
             // Profile updated successfully.
-
-            // Check if a file is uploaded
             if (!empty($_FILES['profile_photo']['name'])) {
                 $targetDirectory = "user_image/";
                 $originalFileName = basename($_FILES['profile_photo']['name']);
@@ -165,15 +163,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $uploadOk = 1;
                 $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
 
-                // Check file size
-                if ($_FILES['profile_photo']['size'] > 2000000) {
-                    $_SESSION['notification'] = "Sorry, the maximum file size allowed is 2MB.";
+                // Allow only specific file types (PNG, JPEG, JPG)
+                $allowedFileTypes = array('png', 'jpeg', 'jpg');
+                if (!in_array($imageFileType, $allowedFileTypes)) {
+                    $_SESSION['notification'] = "Sorry, only PNG, JPEG, JPG files are allowed.";
                     $uploadOk = 0;
                 }
 
-                // Allow certain file formats
-                if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
-                    $_SESSION['notification'] = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+                // Check file size
+                if ($_FILES['profile_photo']['size'] > 2000000) {
+                    $_SESSION['notification'] = "Sorry, the maximum file size allowed is 2MB.";
                     $uploadOk = 0;
                 }
 
@@ -183,7 +182,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 } else {
                     // if everything is ok, try to upload file
                     if (move_uploaded_file($_FILES['profile_photo']['tmp_name'], $targetFile)) {
-                        // Gambar berhasil diunggah
+                        // File berhasil diunggah
                         // $_SESSION['notification'] = "Profile photo uploaded successfully.";
 
                         // Update database with file path   
@@ -198,7 +197,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     }
                 }
             }
-
             $_SESSION['notification'] = "Profile updated successfully.";
         } else {
             $_SESSION['notification'] = "Failed to update profile. Please try again.";
