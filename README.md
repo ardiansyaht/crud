@@ -1,4 +1,8 @@
-# Ardhiansyah Tanjung - 21552011105 (Kelompok 1)
+# Kelompok 1
+# Ardhiansyah Tanjung (21552011105)
+# Muhammad Muadz Al Chairi (21552011370)
+# Deti Komalasari Silfi (21552011321)
+# Silvia Nur Baiti (21552011400)
 
 # TechForge Academy
 
