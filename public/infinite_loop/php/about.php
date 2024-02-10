@@ -296,9 +296,7 @@ if (!isset($_SESSION['session_email'])) {
       <div class="row">
         <div class="col-lg-12">
           <p>
-            Copyright © 2023 TechForge Academy
-
-            <br />Designed by TechForge
+            Copyright &copy; 21552011105_Ardhiansyah Tanjung_KELOMPOK 1_TIFRP221PA_UASWEB1.
           </p>
         </div>
       </div>

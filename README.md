@@ -2,8 +2,9 @@
 
 # TechForge Academy
 
+Projek ini dibuat dengan bahasa pemrograman PHP dengan tema pendaftaran Bootcamp coding
 ![img 1](dokumentasi/login.png)
 ![img 2](dokumentasi/register.png)
-![img 1](dokumentasi/verif.png)
-![img 1](dokumentasi/homepage.png)
-![img 1](dokumentasi/profile.png)
+![img 3](dokumentasi/verif.png)
+![img 4](dokumentasi/homepage.png)
+![img 5](dokumentasi/profile.png)
