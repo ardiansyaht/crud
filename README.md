@@ -1,9 +1,9 @@
-<<<<<<< HEAD
 # Ardhiansyah Tanjung - 21552011105 (Kelompok 1)
 
 # TechForge Academy
 
-![img 1] (dokumentasi/login.png)
-=======
-## TEST
->>>>>>> fd8cb5cf7c8bb558155f763203307100d309dc53
+![img 1](dokumentasi/login.png)
+![img 2](dokumentasi/register.png)
+![img 1](dokumentasi/verif.png)
+![img 1](dokumentasi/homepage.png)
+![img 1](dokumentasi/profile.png)
