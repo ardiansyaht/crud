@@ -1,5 +1,5 @@
 <?php
-// connection.php
+
 require_once('config_koneksi.php');
 try {
         // Buat koneksi PDO

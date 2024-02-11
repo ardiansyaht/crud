@@ -411,7 +411,7 @@ function isValidLength($input, $minLength)
                         </div>
                         <footer class="text-center small tm-footer">
                             <p class="mb-0">
-                                Copyright &copy; 21552011105_Ardhiansyah Tanjung_KELOMPOK 1_TIFRP221PA_UASWEB1.</p>
+                                Copyright &copy; 21552011105_KELOMPOK 1_TIFRP221PA_UASWEB1.</p>
                         </footer>
                         <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
                         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>

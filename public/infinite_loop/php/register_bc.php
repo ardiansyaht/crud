@@ -196,7 +196,7 @@ $userRole = isset($_SESSION['session_role']) ? $_SESSION['session_role'] : '';
                 </button>
                 <footer class="text-center small tm-footer">
                     <p class="mb-0">
-                        Copyright &copy; 21552011105_Ardhiansyah Tanjung_KELOMPOK 1_TIFRP221PA_UASWEB1.</p>
+                        Copyright &copy; 21552011105_KELOMPOK 1_TIFRP221PA_UASWEB1.</p>
                 </footer>
 
             </form>
