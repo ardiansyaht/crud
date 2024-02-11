@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 08 Feb 2024 pada 10.11
+-- Waktu pembuatan: 11 Feb 2024 pada 12.42
 -- Versi server: 10.4.22-MariaDB-log
 -- Versi PHP: 8.1.2
 
@@ -110,7 +110,7 @@ CREATE TABLE `tb_login_bc` (
 --
 
 INSERT INTO `tb_login_bc` (`id`, `username`, `phone_number`, `email`, `name`, `company`, `password`, `photo_path`, `registration_time`, `otp_code`, `otp_expiration`, `status`, `failed_login_attempts`, `is_locked`, `reset_token`, `reset_token_expires`, `role`) VALUES
-(90, 'tarankaa', '081912388170', 'ardiansyah3151@gmail.com', 'si cantik', 'my home', '$2y$10$4cfzAcdomhq2V4ej6Vi.s.pVhJypqblsqmGLubzvyNGFap2F9xjoK', 'user_image/ac5ceb879d704085b725bfef05d4aa707ac8fb34b2f64a338db35eb14a3a3475.jpg', '2024-02-02 13:04:55', '928046', '2024-02-02 13:06:55', 'verified', 0, 0, '', NULL, 'admin'),
+(90, 'tarankaa', '081912388170', 'ardiansyah3151@gmail.com', 'si cantik', 'my home', '$2y$10$XO5MzSbmTjLM.rn0Rpu8a.JE6rmSGJMkiKu5lM5/xh8iLhyGJ3M8e', NULL, '2024-02-02 13:04:55', '928046', '2024-02-02 13:06:55', 'verified', 0, 0, '', NULL, 'admin'),
 (91, 'antnjg', '0891238123', 'antnjg2306@gmail.com', NULL, NULL, '$2y$10$.xMSSp9yfuSk6aZa3bkoOel9T5PfikQxORu/8GLsIffNvHC6g2nH.', NULL, '2024-02-07 20:52:22', '533167', '2024-02-07 20:54:22', 'verified', 0, 0, '', NULL, 'users');
 
 --
